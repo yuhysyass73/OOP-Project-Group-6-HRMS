@@ -28,7 +28,7 @@ public class NhanVien {
     public String getPhongBan() { return phongBan; }
     public String getSdt() { return sdt; }
     public String getEmail() { return email; }
-    public LocalDate getNgaySinh() { return ngaySinh; }
+    public String getNgaySinh() { return ngaySinh; }
     public String getCccd() { return cccd; }
     public int getThamNien() { return thamNien; }
     public int getDiemViPham() { return diemViPham; }
