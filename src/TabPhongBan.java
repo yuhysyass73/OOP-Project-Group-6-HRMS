@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class TabPhongBan extends JPanel {
-
+  
     private QuanLyNhanVienGUI parent;
     private List<NhanVien> danhSachNV;
     private List<PhongBan> danhSachPB;
