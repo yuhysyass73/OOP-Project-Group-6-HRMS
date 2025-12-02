@@ -16,7 +16,6 @@ public class DuAn {
         this.doPhucTap = doPhucTap;
         this.danhSachThanhVien = new ArrayList<>();
     }
-}
 
     public String getMaDuAn()
     {
@@ -57,3 +56,4 @@ public class DuAn {
     {
         return this.tenDuAn;
     }
+}
