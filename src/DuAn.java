@@ -48,3 +48,12 @@ public class DuAn {
         this.danhSachThanhVien.add(nv);
     }
     
+    public boolean hasThanhVien(NhanVien nv)
+    {
+        return this.danhSachThanhVien.contains(nv);
+    }
+    @Overide
+    public String toString()
+    {
+        return this.tenDuAn;
+    }
