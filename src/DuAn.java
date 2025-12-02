@@ -17,3 +17,20 @@ public class DuAn {
         this.danhSachThanhVien = new ArrayList<>();
     }
 }
+
+    public String getMaDuAn()
+    {
+        return maDuAn;
+    }
+    public String getTenDuAn()
+    {
+        return tenDuAn;
+    }
+    public int getDoPhucTap()
+    {
+        return doPhucTap;
+    }
+    public List<NhanVien> getDanhSachThanhVien()
+    {
+        return danhSachThanhVien;
+    }
