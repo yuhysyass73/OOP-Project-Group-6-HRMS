@@ -28,27 +28,7 @@ public class TabDuAn
 
         JPanel crudPanel = new JPanel(new BorderLayout(10, 10));
         crudPanel.setBorder(BorderFactory.createTitledBorder("Quản lý Dự án"));
-         JPanel formDuAnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        formDuAnPanel.add(new JLabel("Mã Dự án:"));
-        txtMaDuAn = new JTextField(10);
-        formDuAnPanel.add(txtMaDuAn);
         
-        formDuAnPanel.add(new JLabel("Tên Dự án:"));
-        txtTenDuAn = new JTextField(20);
-        formDuAnPanel.add(txtTenDuAn);
-        
-        formDuAnPanel.add(new JLabel("Độ phức tạp:"));
-        cmbDoPhucTap = new JComboBox<>(new Integer[]{1, 2, 3});
-        formDuAnPanel.add(cmbDoPhucTap);
-        
-        JButton btnThemDuAn = new JButton("Thêm Dự án");
-        btnThemDuAn.addActionListener(e -> themDuAn());
-        formDuAnPanel.add(btnThemDuAn);
-        
-        crudPanel.add(formDuAnPanel, BorderLayout.NORTH);
-        
-        String[] columnsDuAn = {"Mã DA", "Tên Dự án", "Độ phức tạp"};
-
 
     }
 }
