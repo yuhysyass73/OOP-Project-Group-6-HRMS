@@ -29,7 +29,7 @@ public class TabDuAn
         JPanel crudPanel = new JPanel(new BorderLayout(10, 10));
         crudPanel.setBorder(BorderFactory.createTitledBorder("Quản lý Dự án"));
         
-         JPanel formDuAnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel formDuAnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         formDuAnPanel.add(new JLabel("Mã Dự án:"));
         txtMaDuAn = new JTextField(10);
         formDuAnPanel.add(txtMaDuAn);
@@ -49,6 +49,15 @@ public class TabDuAn
         crudPanel.add(formDuAnPanel, BorderLayout.NORTH);
         
         String[] columnsDuAn = {"Mã DA", "Tên Dự án", "Độ phức tạp"};
+        modelDuAn = new DefaultTableModel(columnsDuAn, 0) 
+        {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tableDuAn = new JTable(modelDuAn);
+        crudPanel.add(new JScrollPane(tableDuAn), BorderLayout.CENTER);
+        
+        JPanel memberPanel = new JPanel(new BorderLayout(10, 10));
+        memberPanel.setBorder(BorderFactory.createTitledBorder("Quản lý Thành viên Dự án"));
 
 
     }
