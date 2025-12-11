@@ -9,7 +9,7 @@ public class DuAn {
 
     private List<NhanVien> danhSachThanhVien;
 
-    public DuAn(String maDuAN, String tenDuAn, int doPhucTap)
+    public DuAn(String maDuAn, String tenDuAn, int doPhucTap)
     {
         this.maDuAn = maDuAn;
         this.tenDuAn = tenDuAn;

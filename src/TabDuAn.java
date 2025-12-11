@@ -3,14 +3,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class TabDuAn 
+public class TabDuAn extends JPanel
 {
     private QuanLyNhanVienGUI parent;
     private List<NhanVien> danhSachNV;
     private List<DuAn> danhSachDuAn;
 
     private JTextField txtMaDuAn, txtTenDuAn;
-    private JcomboBox<Integer> cmbDoPhucTap;
+    private JComboBox<Integer> cmbDoPhucTap;
     private DefaultTableModel modelDuAn;
     private JTable tableDuAn;
     private JComboBox<DuAn> cmbChonDuAn;
