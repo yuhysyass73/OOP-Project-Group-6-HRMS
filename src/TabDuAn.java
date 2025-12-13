@@ -110,7 +110,8 @@ public class TabDuAn extends JPanel
         txtMaDuAn.setText("");
         txtTenDuAn.setText("");
     }
-    private void themNhanVienVaoDuAn() {
+    private void themNhanVienVaoDuAn() 
+    {
         DuAn selectedDA = (DuAn) cmbChonDuAn.getSelectedItem();
         String maNV = txtMaNVThemVaoDuAn.getText().trim();
 
@@ -168,5 +169,17 @@ public class TabDuAn extends JPanel
         }
     }
 
+    public void updateDuAnComboBox() 
+    {
+        if (cmbChonDuAn == null) return;
+        Object selected = cmbChonDuAn.getSelectedItem();
+        cmbChonDuAn.removeAllItems();
+        for (DuAn da : danhSachDuAn) {
+            cmbChonDuAn.addItem(da);
+        }
+        if (selected != null) {
+            cmbChonDuAn.setSelectedItem(selected);
+        }
+    }
 
 }
