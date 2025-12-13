@@ -53,5 +53,55 @@ public class TabHieuSuat extends JPanel
         });
     }
 
+    private JPanel createDiemDanhPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("Nhập Mã nhân viên:"), gbc);
+        
+        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+        txtMaNVDiemDanh = new JTextField(15);
+        panel.add(txtMaNVDiemDanh, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
+        panel.add(new JLabel("Lỗi vi phạm:"), gbc);
+
+        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        radioDiMuon = new JRadioButton("Đi muộn (+1 điểm)");
+        radioVangMat = new JRadioButton("Vắng mặt (+2 điểm)");
+        radioDiMuon.setSelected(true);
+        groupDiemDanh = new ButtonGroup();
+        groupDiemDanh.add(radioDiMuon);
+        groupDiemDanh.add(radioVangMat);
+        radioPanel.add(radioDiMuon);
+        radioPanel.add(radioVangMat);
+        gbc.gridx = 1;
+        panel.add(radioPanel, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.EAST;
+        JButton btnGhiNhanDiemDanh = new JButton("Ghi nhận");
+        btnGhiNhanDiemDanh.addActionListener(e -> xuLyGhiNhanDiemDanh());
+        panel.add(btnGhiNhanDiemDanh, gbc);
+        
+
+        gbc.gridy = 3; gbc.gridx = 0; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0; gbc.weighty = 1.0; 
+        
+        String[] columnNames = {"Mã NV", "Họ Tên", "Lỗi vi phạm"};
+        modelViPham = new DefaultTableModel(columnNames, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tableViPham = new JTable(modelViPham);
+        
+        JScrollPane scrollPane = new JScrollPane(tableViPham);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách Vi phạm Đã ghi nhận (trong phiên)"));
+        panel.add(scrollPane, gbc);
+
+        return panel;
+    }
 
 }
