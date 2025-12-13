@@ -55,4 +55,43 @@ public class TabHieuSuat extends JPanel
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    public void refreshBaoCao() 
+    {
+        if (modelTopThuong == null || modelTopPhat == null) return;
+
+        modelTopThuong.setRowCount(0);
+        List<NhanVien> topThuong = danhSachNV.stream()
+                .filter(nv -> nv.getDiemThuongDuAn() > 0)
+                .sorted(Comparator.comparingInt(NhanVien::getDiemThuongDuAn).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+
+        int hangThuong = 1;
+        for (NhanVien nv : topThuong) {
+            modelTopThuong.addRow(new Object[]{
+                hangThuong++,
+                nv.getMaNhanVien(),
+                nv.getHoTen(),
+                nv.getDiemThuongDuAn()
+            });
+        }
+
+        modelTopPhat.setRowCount(0);
+        List<NhanVien> topPhat = danhSachNV.stream()
+                .filter(nv -> nv.getDiemViPham() > 0)
+                .sorted(Comparator.comparingInt(NhanVien::getDiemViPham).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+
+        int hangPhat = 1;
+        for (NhanVien nv : topPhat) {
+            modelTopPhat.addRow(new Object[]{
+                hangPhat++,
+                nv.getMaNhanVien(),
+                nv.getHoTen(),
+                nv.getDiemViPham()
+            });
+        }
+    }
+
 }
