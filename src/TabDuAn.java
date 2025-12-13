@@ -59,6 +59,37 @@ public class TabDuAn extends JPanel
         JPanel memberPanel = new JPanel(new BorderLayout(10, 10));
         memberPanel.setBorder(BorderFactory.createTitledBorder("Quản lý Thành viên Dự án"));
 
+          JPanel memberControlPanel = new JPanel(new BorderLayout());
+        
+        JPanel selectDuAnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectDuAnPanel.add(new JLabel("Chọn Dự án:"));
+        cmbChonDuAn = new JComboBox<>();
+        cmbChonDuAn.addActionListener(e -> locThanhVienTheoDuAn());
+        selectDuAnPanel.add(cmbChonDuAn);
+        
+        JPanel addMemberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        addMemberPanel.add(new JLabel("Nhập Mã NV:"));
+        txtMaNVThemVaoDuAn = new JTextField(10);
+        addMemberPanel.add(txtMaNVThemVaoDuAn);
+        JButton btnThemNVVaoDuAn = new JButton("Thêm Nhân viên");
+        btnThemNVVaoDuAn.addActionListener(e -> themNhanVienVaoDuAn());
+        addMemberPanel.add(btnThemNVVaoDuAn);
+
+        memberControlPanel.add(selectDuAnPanel, BorderLayout.NORTH);
+        memberControlPanel.add(addMemberPanel, BorderLayout.CENTER);
+        
+        memberPanel.add(memberControlPanel, BorderLayout.NORTH);
+
+        String[] columnsThanhVien = {"Mã NV", "Họ Tên", "Phòng ban"};
+        modelThanhVienDuAn = new DefaultTableModel(columnsThanhVien, 0) {
+             @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tableThanhVienDuAn = new JTable(modelThanhVienDuAn);
+        memberPanel.add(new JScrollPane(tableThanhVienDuAn), BorderLayout.CENTER);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, crudPanel, memberPanel);
+        splitPane.setResizeWeight(0.4);
+        add(splitPane, BorderLayout.CENTER);
 
     }
 }
