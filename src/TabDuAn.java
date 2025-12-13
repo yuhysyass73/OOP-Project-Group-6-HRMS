@@ -110,6 +110,38 @@ public class TabDuAn extends JPanel
         txtMaDuAn.setText("");
         txtTenDuAn.setText("");
     }
+    private void themNhanVienVaoDuAn() {
+        DuAn selectedDA = (DuAn) cmbChonDuAn.getSelectedItem();
+        String maNV = txtMaNVThemVaoDuAn.getText().trim();
+
+        if (selectedDA == null) { /* ... báo lỗi ... */ return; }
+        if (maNV.isEmpty()) { /* ... báo lỗi ... */ return; }
+
+        NhanVien nvFound = null;
+        for (NhanVien nv : danhSachNV) {
+            if (nv.getMaNhanVien().equals(maNV)) {
+                nvFound = nv;
+                break;
+            }
+        }
+        if (nvFound == null) { /* ... báo lỗi ... */ return; }
+        if (selectedDA.hasThanhVien(nvFound)) { /* ... báo lỗi ... */ return; }
+
+        int diemThuong = selectedDA.getDoPhucTap();
+        nvFound.addDiemThuongDuAn(diemThuong);
+        selectedDA.addThanhVien(nvFound);
+
+        locThanhVienTheoDuAn();
+
+        JOptionPane.showMessageDialog(this, "Đã thêm " + nvFound.getHoTen() + " vào dự án.\n"
+                + "Nhân viên được cộng " + diemThuong + " điểm thưởng (Tổng điểm thưởng: " + nvFound.getDiemThuongDuAn() + ").",
+                "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                
+        txtMaNVThemVaoDuAn.setText("");
+        
+        parent.refreshLuongTable();
+        parent.refreshBaoCaoTab();
+    }
 
 
 }
