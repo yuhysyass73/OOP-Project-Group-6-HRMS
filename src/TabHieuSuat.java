@@ -104,4 +104,56 @@ public class TabHieuSuat extends JPanel
         return panel;
     }
 
+        private void xuLyGhiNhanDiemDanh() {
+        String maNV = txtMaNVDiemDanh.getText().trim();
+        if (maNV.isEmpty()) { /* ... báo lỗi ... */ return; }
+
+        NhanVien nvFound = null;
+        for (NhanVien nv : danhSachNV) {
+            if (nv.getMaNhanVien().equals(maNV)) {
+                nvFound = nv;
+                break;
+            }
+        }
+        if (nvFound == null) { /* ... báo lỗi ... */ return; }
+
+        int pointsToAdd = 0;
+        String violationType = "";
+        if (radioDiMuon.isSelected()) {
+            pointsToAdd = 1;
+            violationType = "Đi muộn";
+        } else if (radioVangMat.isSelected()) {
+            pointsToAdd = 2;
+            violationType = "Vắng mặt";
+        }
+
+        nvFound.addDiemViPham(pointsToAdd);
+
+        JOptionPane.showMessageDialog(this,
+                "Đã ghi nhận " + violationType + " cho nhân viên " + nvFound.getHoTen() + ".\n"
+                + "Tổng điểm vi phạm mới: " + nvFound.getDiemViPham(),
+                "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                
+        modelViPham.addRow(new Object[]{
+            nvFound.getMaNhanVien(),
+            nvFound.getHoTen(),
+            violationType
+        });
+
+        txtMaNVDiemDanh.setText("");
+        radioDiMuon.setSelected(true);
+        
+
+        parent.refreshLuongTable();
+        parent.refreshBaoCaoTab();
+    }
+
+
+    private JPanel createPlaceholderPanel(String text) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.ITALIC, 18));
+        panel.add(label);
+        return panel;
+    }
 }
