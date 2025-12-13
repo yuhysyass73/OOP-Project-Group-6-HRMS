@@ -142,6 +142,24 @@ public class TabDuAn extends JPanel
         parent.refreshLuongTable();
         parent.refreshBaoCaoTab();
     }
+    private void locThanhVienTheoDuAn() 
+    {
+        if (modelThanhVienDuAn == null || cmbChonDuAn == null) return;
+        
+        DuAn selectedDA = (DuAn) cmbChonDuAn.getSelectedItem();
+        modelThanhVienDuAn.setRowCount(0);
+        
+        if (selectedDA == null) return;
+        
+        for (NhanVien nv : selectedDA.getDanhSachThanhVien()) {
+            modelThanhVienDuAn.addRow(new Object[]{
+                nv.getMaNhanVien(),
+                nv.getHoTen(),
+                nv.getPhongBan()
+            });
+        }
+    }
+    
 
 
 }
