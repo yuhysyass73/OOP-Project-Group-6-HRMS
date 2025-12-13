@@ -90,6 +90,26 @@ public class TabDuAn extends JPanel
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, crudPanel, memberPanel);
         splitPane.setResizeWeight(0.4);
         add(splitPane, BorderLayout.CENTER);
-
     }
+    private void themDuAn() 
+    {
+        String maDA = txtMaDuAn.getText().trim();
+        String tenDA = txtTenDuAn.getText().trim();
+        Integer doPhucTap = (Integer) cmbDoPhucTap.getSelectedItem();
+
+        if (maDA.isEmpty() || tenDA.isEmpty()) { /* ... báo lỗi ... */ return; }
+        if (danhSachDuAn.stream().anyMatch(da -> da.getMaDuAn().equals(maDA))) { /* ... báo lỗi ... */ return; }
+
+        DuAn da = new DuAn(maDA, tenDA, doPhucTap);
+        danhSachDuAn.add(da);
+        modelDuAn.addRow(new Object[]{da.getMaDuAn(), da.getTenDuAn(), da.getDoPhucTap()});
+        
+        parent.updateDuAnComboBox();
+        
+        JOptionPane.showMessageDialog(this, "Thêm dự án thành công!");
+        txtMaDuAn.setText("");
+        txtTenDuAn.setText("");
+    }
+
+
 }
