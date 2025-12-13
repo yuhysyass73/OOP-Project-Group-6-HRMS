@@ -1,11 +1,17 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.List;
 
 public class TabLuong extends JPanel {
-    private QuanLyNhanVienGUI parent;
+    //private QuanLyNhanVienGUI parent;
     private List<NhanVien> danhSachNV;
     private NumberFormat currencyFormatter;
 
@@ -13,7 +19,7 @@ public class TabLuong extends JPanel {
     private JTable table;
 
     TabLuong(QuanLyNhanVienGUI parent) {
-        this.parent = parent;
+        //this.parent = parent;
         this.danhSachNV = parent.danhSachNV;
         this.currencyFormatter = parent.currencyFormatter;
 
@@ -22,8 +28,17 @@ public class TabLuong extends JPanel {
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnRefresh = new JButton("Làm mới bảng lương");
+        btnRefresh.setFocusPainted(false);
         btnRefresh.addActionListener(e -> refreshLuongTable());
+
+        JButton btnXuatExcel = new JButton("Xuất bảng lương (Excel)");
+        btnXuatExcel.setBackground(new Color(0, 153, 76));
+        btnXuatExcel.setForeground(Color.WHITE);
+        btnXuatExcel.setFocusPainted(false);
+        btnXuatExcel.addActionListener(e->xuatFileExcel());
+
         panel.add(btnRefresh);
+        panel.add(btnXuatExcel);
         add(panel, BorderLayout.NORTH);
 
         String[] columnNames = {"Mã NV", "Họ tên", "Lương (CB+TN)", "Điểm thưởng DA", "Thưởng Dự án", "Thưởng Chuyên cần", "Điểm vi phạm", "Tiền phạt", "Lương thực nhận"};
@@ -67,4 +82,59 @@ public class TabLuong extends JPanel {
             });
         }
     }
+    private void xuatFileExcel(){
+        if (tableModel.getColumnCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu để xuất!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu bảng lương");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel CSV (*.csv)", "csv"));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection != JFileChooser.APPROVE_OPTION) return;
+
+        //TH nếu lưu file
+        File saveFile = fileChooser.getSelectedFile();
+        if (!saveFile.getAbsolutePath().endsWith(".csv")) {
+            saveFile = new File(saveFile.getAbsolutePath() + ".csv");
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(
+            new OutputStreamWriter(new FileOutputStream(saveFile), StandardCharsets.UTF_8))) {
+                
+            writer.write('\uFEFF'); 
+
+            for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                writer.write(tableModel.getColumnName(i));
+                if (i < tableModel.getColumnCount() - 1)
+                    writer.write(',');
+            }
+            writer.newLine();
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                for (int j = 0; j < tableModel.getColumnCount(); j++){
+                    Object cell = tableModel.getValueAt(i, j);
+                    String val = (cell == null) ? "" : cell.toString();
+                    val = val.replace(',', '.');
+                    writer.write(val);
+
+                    if (i < tableModel.getColumnCount())
+                        writer.write(',');
+                }
+                writer.newLine();
+            }
+
+            JOptionPane.showMessageDialog(this, "Xuất file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                Desktop.getDesktop().open(saveFile);
+            }
+            catch (Exception ex) {
+
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi lưu file: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }   
 }

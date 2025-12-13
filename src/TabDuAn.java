@@ -163,7 +163,7 @@ public class TabDuAn extends JPanel
     
     public void refreshTableDuAn() 
     {
-        modelDuAn.setRowCount(0)
+        modelDuAn.setRowCount(0);
         for (DuAn da : danhSachDuAn) {
              modelDuAn.addRow(new Object[]{da.getMaDuAn(), da.getTenDuAn(), da.getDoPhucTap()});
         }
