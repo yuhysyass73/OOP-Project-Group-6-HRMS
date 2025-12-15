@@ -164,7 +164,31 @@ public class TabHieuSuat extends JPanel
         inputPanel.add(new JLabel("Mã Nhân viên cần đánh giá:"));
         txtMaNVKPI = new JTextField(15);
         inputPanel.add(txtMaNVKPI);
-        panel.add(inputPanel, BorderLayout.NORTH);
+        
+        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        JButton btnTinhDiem = new JButton("Tính điểm Tổng kết");
+        btnTinhDiem.setBackground(new Color(230, 240, 255));
+        
+        lblDiemTongKet = new JLabel("  Tổng điểm: 0.0  ");
+        lblDiemTongKet.setFont(new Font("Arial", Font.BOLD, 14));
+        lblDiemTongKet.setForeground(Color.BLUE);
+        lblDiemTongKet.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        
+        JButton btnLuuKPI = new JButton("Lưu kết quả KPI");
+        btnLuuKPI.setBackground(new Color(200, 255, 200));
+        
+        actionPanel.add(btnTinhDiem);
+        actionPanel.add(lblDiemTongKet);
+        actionPanel.add(btnLuuKPI);
+
+        JPanel topContainer = new JPanel();
+        topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
+        
+        topContainer.add(inputPanel);
+        topContainer.add(actionPanel);
+
+        panel.add(topContainer, BorderLayout.NORTH);
 
         danhSachTieuChi = new ArrayList<>();
         danhSachTieuChi.add(new TieuChiKPI("Hiệu quả công việc (40%)", 0.4));
@@ -172,7 +196,7 @@ public class TabHieuSuat extends JPanel
         danhSachTieuChi.add(new TieuChiKPI("Kỷ luật & Giờ giấc (20%)", 0.2));
         danhSachTieuChi.add(new TieuChiKPI("Sáng tạo (10%)", 0.1));
 
-        String[] cols = {"Tiêu chí", "Trọng số", "Điểm (1-5)", "Thành tiền (Điểm * Trọng số)"};
+        String[] cols = {"Tiêu chí", "Trọng số", "Điểm (1-5)", "Điểm thành phần (Điểm * Trọng số)"};
         modelKPI = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int row, int column) {
                 return column == 2;
@@ -190,21 +214,6 @@ public class TabHieuSuat extends JPanel
 
         tableKPI = new JTable(modelKPI);
         panel.add(new JScrollPane(tableKPI), BorderLayout.CENTER);
-
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        
-        JButton btnTinhDiem = new JButton("Tính điểm Tổng kết");
-        lblDiemTongKet = new JLabel("Tổng điểm: 0.0");
-        lblDiemTongKet.setFont(new Font("Arial", Font.BOLD, 14));
-        lblDiemTongKet.setForeground(Color.BLUE);
-        
-        JButton btnLuuKPI = new JButton("Lưu kết quả KPI");
-        
-        bottomPanel.add(btnTinhDiem);
-        bottomPanel.add(lblDiemTongKet);
-        bottomPanel.add(btnLuuKPI);
-        
-        panel.add(bottomPanel, BorderLayout.SOUTH);
 
         
         btnTinhDiem.addActionListener(e -> {
