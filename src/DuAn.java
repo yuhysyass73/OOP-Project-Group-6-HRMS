@@ -34,11 +34,11 @@ public class DuAn {
         return danhSachThanhVien;
     }
 
-    public void setTenDuAn(String TenDuAn)
+    public void setTenDuAn(String tenDuAn)
     {
         this.tenDuAn = tenDuAn;
     }
-    public void setDoPhucTap(int doPhuctTap)
+    public void setDoPhucTap(int doPhucTap)
     {
         this.doPhucTap = doPhucTap;
     }

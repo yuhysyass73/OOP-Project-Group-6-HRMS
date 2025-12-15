@@ -178,7 +178,7 @@ public class TabLuong extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,5,5,5);
         int hang = 0;
-        for (Entry entry : danhSachLCB.entrySet()) {
+        for (Entry<String, Long> entry : danhSachLCB.entrySet()) {
             gbc.gridx = 0; gbc.gridy = hang;
             topPanel.add(new JLabel(entry.getKey().toString()), gbc);
 
@@ -248,7 +248,7 @@ public class TabLuong extends JPanel {
             }
             else {
                 int i = 0;
-                for (Entry entry : danhSachLCB.entrySet()) {
+                for (Entry<String, Long> entry : danhSachLCB.entrySet()) {
                     danhSachLCB.put(entry.getKey().toString(), Long.parseLong(textArray.get(i++).getText()));
                 }
 
