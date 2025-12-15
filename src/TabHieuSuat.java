@@ -160,15 +160,12 @@ public class TabHieuSuat extends JPanel
     private JPanel createKPIPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
 
-        // 1. Panel nhập thông tin
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         inputPanel.add(new JLabel("Mã Nhân viên cần đánh giá:"));
         txtMaNVKPI = new JTextField(15);
         inputPanel.add(txtMaNVKPI);
         panel.add(inputPanel, BorderLayout.NORTH);
 
-        // 2. Bảng Tiêu chí KPI
-        // Khởi tạo dữ liệu tiêu chí mặc định
         danhSachTieuChi = new ArrayList<>();
         danhSachTieuChi.add(new TieuChiKPI("Hiệu quả công việc (40%)", 0.4));
         danhSachTieuChi.add(new TieuChiKPI("Kỹ năng làm việc nhóm (30%)", 0.3));
@@ -178,16 +175,15 @@ public class TabHieuSuat extends JPanel
         String[] cols = {"Tiêu chí", "Trọng số", "Điểm (1-5)", "Thành tiền (Điểm * Trọng số)"};
         modelKPI = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int row, int column) {
-                return column == 2; // Chỉ cho sửa cột Điểm
+                return column == 2;
             }
         };
 
-        // Đổ dữ liệu vào bảng
         for (TieuChiKPI tc : danhSachTieuChi) {
             modelKPI.addRow(new Object[]{
                 tc.getTenTieuChi(),
                 tc.getTrongSo(),
-                0, // Điểm mặc định
+                0,
                 0.0
             });
         }
@@ -195,7 +191,6 @@ public class TabHieuSuat extends JPanel
         tableKPI = new JTable(modelKPI);
         panel.add(new JScrollPane(tableKPI), BorderLayout.CENTER);
 
-        // 3. Panel Chức năng dưới cùng
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         
         JButton btnTinhDiem = new JButton("Tính điểm Tổng kết");
@@ -211,14 +206,11 @@ public class TabHieuSuat extends JPanel
         
         panel.add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- XỬ LÝ SỰ KIỆN NÚT BẤM ---
         
-        // Nút Tính điểm
         btnTinhDiem.addActionListener(e -> {
             double tongDiem = 0;
             try {
                 for (int i = 0; i < tableKPI.getRowCount(); i++) {
-                    // Lấy điểm từ cột 2 (người dùng nhập)
                     int diemNhap = Integer.parseInt(tableKPI.getValueAt(i, 2).toString());
                     
                     if (diemNhap < 1 || diemNhap > 5) {
@@ -226,11 +218,9 @@ public class TabHieuSuat extends JPanel
                         return;
                     }
 
-                    // Cập nhật vào list object
                     TieuChiKPI tc = danhSachTieuChi.get(i);
                     tc.setDiem(diemNhap);
 
-                    // Tính thành phần và hiển thị ra cột 3
                     double diemThanhPhan = tc.getDiemThanhPhan();
                     modelKPI.setValueAt(diemThanhPhan, i, 3);
                     
@@ -242,7 +232,6 @@ public class TabHieuSuat extends JPanel
             }
         });
 
-        // Nút Lưu
         btnLuuKPI.addActionListener(e -> {
             String maNV = txtMaNVKPI.getText().trim();
             if (maNV.isEmpty()) {
@@ -250,7 +239,6 @@ public class TabHieuSuat extends JPanel
                 return;
             }
             
-            // Tìm nhân viên
             NhanVien nvFound = null;
             for (NhanVien nv : danhSachNV) {
                 if (nv.getMaNhanVien().equals(maNV)) {
@@ -264,7 +252,6 @@ public class TabHieuSuat extends JPanel
                 return;
             }
 
-            // Lấy điểm từ label (đã tính ở bước trên)
             String textDiem = lblDiemTongKet.getText().replace("Tổng điểm: ", "").replace(",", ".");
             double diemKPI = Double.parseDouble(textDiem);
 
@@ -273,7 +260,6 @@ public class TabHieuSuat extends JPanel
                  return;
             }
 
-            // LƯU VÀO NHÂN VIÊN
             nvFound.setDiemKPI(diemKPI);
             
             JOptionPane.showMessageDialog(this, "Đã lưu điểm KPI (" + diemKPI + ") cho nhân viên " + nvFound.getHoTen());
@@ -281,7 +267,7 @@ public class TabHieuSuat extends JPanel
             // Reset
             txtMaNVKPI.setText("");
             lblDiemTongKet.setText("Tổng điểm: 0.0");
-            // Reset bảng về 0
+            
             for(int i=0; i<tableKPI.getRowCount(); i++) {
                 tableKPI.setValueAt(0, i, 2);
                 tableKPI.setValueAt(0.0, i, 3);
