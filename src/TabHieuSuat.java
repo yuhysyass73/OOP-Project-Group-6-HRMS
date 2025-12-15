@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,6 +20,12 @@ public class TabHieuSuat extends JPanel
     private DefaultTableModel modelViPham;
     private JTable tableViPham;
     
+    private JTextField txtMaNVKPI;
+    private DefaultTableModel modelKPI;
+    private JTable tableKPI;
+    private JLabel lblDiemTongKet;
+    private List<TieuChiKPI> danhSachTieuChi;
+    
     public TabHieuSuat(QuanLyNhanVienGUI parent) {
         this.parent = parent;
         this.danhSachNV = parent.danhSachNV;
@@ -33,12 +40,13 @@ public class TabHieuSuat extends JPanel
         JComboBox<String> modeSelector = new JComboBox<>(modes);
         
         add(topPanel, BorderLayout.NORTH);
-
+        topPanel.add(modeSelector);
+        
         cardLayoutHieuSuat = new CardLayout();
         cardPanelHieuSuat = new JPanel(cardLayoutHieuSuat);
 
         JPanel diemDanhPanel = createDiemDanhPanel();
-        JPanel kpiPanel = createPlaceholderPanel("Chức năng Đánh giá KPI sẽ được xây dựng ở đây");
+        JPanel kpiPanel = createKPIPanel();
         
 
         cardPanelHieuSuat.add(diemDanhPanel, "Điểm danh");
@@ -104,7 +112,7 @@ public class TabHieuSuat extends JPanel
         return panel;
     }
 
-        private void xuLyGhiNhanDiemDanh() {
+    private void xuLyGhiNhanDiemDanh() {
         String maNV = txtMaNVDiemDanh.getText().trim();
         if (maNV.isEmpty()) { /* ... báo lỗi ... */ return; }
 
@@ -149,11 +157,137 @@ public class TabHieuSuat extends JPanel
     }
 
 
-    private JPanel createPlaceholderPanel(String text) {
-        JPanel panel = new JPanel(new GridBagLayout());
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.ITALIC, 18));
-        panel.add(label);
+    private JPanel createKPIPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+
+        // 1. Panel nhập thông tin
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        inputPanel.add(new JLabel("Mã Nhân viên cần đánh giá:"));
+        txtMaNVKPI = new JTextField(15);
+        inputPanel.add(txtMaNVKPI);
+        panel.add(inputPanel, BorderLayout.NORTH);
+
+        // 2. Bảng Tiêu chí KPI
+        // Khởi tạo dữ liệu tiêu chí mặc định
+        danhSachTieuChi = new ArrayList<>();
+        danhSachTieuChi.add(new TieuChiKPI("Hiệu quả công việc (40%)", 0.4));
+        danhSachTieuChi.add(new TieuChiKPI("Kỹ năng làm việc nhóm (30%)", 0.3));
+        danhSachTieuChi.add(new TieuChiKPI("Kỷ luật & Giờ giấc (20%)", 0.2));
+        danhSachTieuChi.add(new TieuChiKPI("Sáng tạo (10%)", 0.1));
+
+        String[] cols = {"Tiêu chí", "Trọng số", "Điểm (1-5)", "Thành tiền (Điểm * Trọng số)"};
+        modelKPI = new DefaultTableModel(cols, 0) {
+            @Override public boolean isCellEditable(int row, int column) {
+                return column == 2; // Chỉ cho sửa cột Điểm
+            }
+        };
+
+        // Đổ dữ liệu vào bảng
+        for (TieuChiKPI tc : danhSachTieuChi) {
+            modelKPI.addRow(new Object[]{
+                tc.getTenTieuChi(),
+                tc.getTrongSo(),
+                0, // Điểm mặc định
+                0.0
+            });
+        }
+
+        tableKPI = new JTable(modelKPI);
+        panel.add(new JScrollPane(tableKPI), BorderLayout.CENTER);
+
+        // 3. Panel Chức năng dưới cùng
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        
+        JButton btnTinhDiem = new JButton("Tính điểm Tổng kết");
+        lblDiemTongKet = new JLabel("Tổng điểm: 0.0");
+        lblDiemTongKet.setFont(new Font("Arial", Font.BOLD, 14));
+        lblDiemTongKet.setForeground(Color.BLUE);
+        
+        JButton btnLuuKPI = new JButton("Lưu kết quả KPI");
+        
+        bottomPanel.add(btnTinhDiem);
+        bottomPanel.add(lblDiemTongKet);
+        bottomPanel.add(btnLuuKPI);
+        
+        panel.add(bottomPanel, BorderLayout.SOUTH);
+
+        // --- XỬ LÝ SỰ KIỆN NÚT BẤM ---
+        
+        // Nút Tính điểm
+        btnTinhDiem.addActionListener(e -> {
+            double tongDiem = 0;
+            try {
+                for (int i = 0; i < tableKPI.getRowCount(); i++) {
+                    // Lấy điểm từ cột 2 (người dùng nhập)
+                    int diemNhap = Integer.parseInt(tableKPI.getValueAt(i, 2).toString());
+                    
+                    if (diemNhap < 1 || diemNhap > 5) {
+                        JOptionPane.showMessageDialog(this, "Điểm phải từ 1 đến 5!");
+                        return;
+                    }
+
+                    // Cập nhật vào list object
+                    TieuChiKPI tc = danhSachTieuChi.get(i);
+                    tc.setDiem(diemNhap);
+
+                    // Tính thành phần và hiển thị ra cột 3
+                    double diemThanhPhan = tc.getDiemThanhPhan();
+                    modelKPI.setValueAt(diemThanhPhan, i, 3);
+                    
+                    tongDiem += diemThanhPhan;
+                }
+                lblDiemTongKet.setText("Tổng điểm: " + String.format("%.2f", tongDiem));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số nguyên vào cột Điểm!");
+            }
+        });
+
+        // Nút Lưu
+        btnLuuKPI.addActionListener(e -> {
+            String maNV = txtMaNVKPI.getText().trim();
+            if (maNV.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Chưa nhập mã nhân viên!");
+                return;
+            }
+            
+            // Tìm nhân viên
+            NhanVien nvFound = null;
+            for (NhanVien nv : danhSachNV) {
+                if (nv.getMaNhanVien().equals(maNV)) {
+                    nvFound = nv;
+                    break;
+                }
+            }
+            
+            if (nvFound == null) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên này!");
+                return;
+            }
+
+            // Lấy điểm từ label (đã tính ở bước trên)
+            String textDiem = lblDiemTongKet.getText().replace("Tổng điểm: ", "").replace(",", ".");
+            double diemKPI = Double.parseDouble(textDiem);
+
+            if (diemKPI == 0) {
+                 JOptionPane.showMessageDialog(this, "Vui lòng tính điểm trước khi lưu!");
+                 return;
+            }
+
+            // LƯU VÀO NHÂN VIÊN
+            nvFound.setDiemKPI(diemKPI);
+            
+            JOptionPane.showMessageDialog(this, "Đã lưu điểm KPI (" + diemKPI + ") cho nhân viên " + nvFound.getHoTen());
+            
+            // Reset
+            txtMaNVKPI.setText("");
+            lblDiemTongKet.setText("Tổng điểm: 0.0");
+            // Reset bảng về 0
+            for(int i=0; i<tableKPI.getRowCount(); i++) {
+                tableKPI.setValueAt(0, i, 2);
+                tableKPI.setValueAt(0.0, i, 3);
+            }
+        });
+
         return panel;
     }
 }

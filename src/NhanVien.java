@@ -10,6 +10,7 @@ public class NhanVien {
     private int thamNien;
     private int diemViPham;
     private int diemThuongDuAn;
+    private double diemKPI;
     //Constructor
     public NhanVien(String maNhanVien, String hoTen, String phongBan, String sdt, String email, String ngaySinh, String cccd, int thamNien) {
         this.maNhanVien = maNhanVien;
@@ -21,6 +22,7 @@ public class NhanVien {
         this.thamNien = thamNien;
         this.diemViPham = 0;
         this.diemThuongDuAn = 0;
+        this.diemKPI = 0.0;
     }
     // Getter
     public String getMaNhanVien() { return maNhanVien; }
@@ -33,6 +35,7 @@ public class NhanVien {
     public int getThamNien() { return thamNien; }
     public int getDiemViPham() { return diemViPham; }
     public int getDiemThuongDuAn() { return diemThuongDuAn; }
+    public double getDiemKPI() { return diemKPI; }
     //Setter
     public void setMaNhanVien(String maNhanVien) { this.maNhanVien = maNhanVien; }
     public void setHoTen(String hoTen) { this.hoTen = hoTen; }
@@ -44,6 +47,7 @@ public class NhanVien {
     public void setThamNien(int thamNien) { this.thamNien = thamNien; }
     public void addDiemViPham(int points) { this.diemViPham += points; }
     public void setDiemViPham(int diemViPham) { this.diemViPham = diemViPham; }
+    public void setDiemKPI(double diemKPI) { this.diemKPI = diemKPI; }
     //Diem thuong
     public void addDiemThuongDuAn(int diem) {
         this.diemThuongDuAn += diem;
