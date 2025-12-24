@@ -9,6 +9,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import MainApp.*;
+import objects.*;
+import dataa.*;
+
 public class TabNhanVien extends JPanel {
 
     private QuanLyNhanVienGUI parent;

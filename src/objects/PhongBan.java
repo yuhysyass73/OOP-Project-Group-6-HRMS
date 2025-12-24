@@ -1,3 +1,5 @@
+package objects;
+
 public class PhongBan {
     private String maPhongBan;
     private String tenPhongBan;

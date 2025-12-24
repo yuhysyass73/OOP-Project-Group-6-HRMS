@@ -7,6 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import MainApp.*;
+import objects.*;
+import dataa.*;
+
 public class TabBaoCao extends JPanel {
     private QuanLyNhanVienGUI parent;
     private List<NhanVien> danhSachNV;
