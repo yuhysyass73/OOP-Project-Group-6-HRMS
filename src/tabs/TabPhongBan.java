@@ -36,5 +36,15 @@ public class TabPhongBan extends JPanel {
         cmbChonPhongBan.addActionListener(e -> locNhanVienTheoPhongBan());
         selectPanel.add(cmbChonPhongBan);
         add(selectPanel, BorderLayout.NORTH);
+    
+        // thông tin nhân viên phòng ban
+        String[] columnNamesNV = {"Mã NV", "Họ Tên", "SĐT", "Email", "Ngày sinh", "CCCD", "Thâm niên (năm)"};
+        modelNhanVienTheoPB = new DefaultTableModel(columnNamesNV, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tableNhanVienTheoPB = new JTable(modelNhanVienTheoPB);
+        
+        add(new JScrollPane(tableNhanVienTheoPB), BorderLayout.CENTER);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 }
