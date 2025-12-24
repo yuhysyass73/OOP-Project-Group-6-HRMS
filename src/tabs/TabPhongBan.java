@@ -68,4 +68,12 @@ public class TabPhongBan extends JPanel {
             }
         }
     }
+
+    public void updatePhongBanComboBox() {
+        if (cmbChonPhongBan == null) return;
+        cmbChonPhongBan.removeAllItems();
+        for (PhongBan pb : danhSachPB) {
+            cmbChonPhongBan.addItem(pb);
+        }
+    }
 }
