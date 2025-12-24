@@ -17,7 +17,6 @@ public class TabDashboard extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
     
-    
     public void refreshDashboard() {
         removeAll();
         
