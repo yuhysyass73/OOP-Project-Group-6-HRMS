@@ -23,6 +23,7 @@ public class TabHeThong extends JPanel {
     private JPasswordField txtPassMoi;
     private JPasswordField txtPassXacNhan;
 
+
     private static final String DB_SOURCE = "quanlynhansu.db";
 
     public TabHeThong(QuanLyNhanVienGUI parent) {
@@ -43,5 +44,50 @@ public class TabHeThong extends JPanel {
         btnBackup.setBackground(new Color(0, 102, 204));
         btnBackup.setForeground(Color.WHITE);
         btnBackup.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        JLabel lblBackupInfo = new JLabel("<html><center>Sao chép toàn bộ dữ liệu hiện tại<br/>ra file dự phòng an toàn.</center></html>");
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 0; pnlBackup.add(btnBackup, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10,0,0,0); pnlBackup.add(lblBackupInfo, gbc);
+
+        JPanel pnlRestore = new JPanel(new GridBagLayout());
+        JButton btnRestore = new JButton("Phục hồi Dữ liệu (Restore)");
+        btnRestore.setIcon(UIManager.getIcon("FileView.computerIcon"));
+        btnRestore.setBackground(new Color(204, 0, 0));
+        btnRestore.setForeground(Color.WHITE);
+        btnRestore.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        JLabel lblRestoreInfo = new JLabel("<html><center>Khôi phục dữ liệu từ file đã lưu.<br/>(Cảnh báo: Dữ liệu hiện tại sẽ mất)</center></html>");
+        
+        gbc.gridx = 0; gbc.gridy = 0; gbc.insets = new Insets(0,0,0,0); pnlRestore.add(btnRestore, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10,0,0,0); pnlRestore.add(lblRestoreInfo, gbc);
+
+        pnlData.add(pnlBackup);
+        pnlData.add(pnlRestore);
+
+        //ĐỔI MẬT KHẨU
+        JPanel pnlSecurity = new JPanel(new BorderLayout());
+        pnlSecurity.setBorder(BorderFactory.createTitledBorder(title: "Bảo mật & Tài khoản"));
+
+        JPanel formPass = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcPass = new GridBagConstraints();
+        gbcPass.insets = new Insets(5, 5, 5, 5);
+        gbcPass.anchor = GridBagConstraints.WEST;
+
+        gbcPass.gridx = 0; gbcPass.gridy = 0; formPass.add(new JLabel("Mật khẩu hiện tại:"), gbcPass);
+        txtPassCu = new JPasswordField(20); gbcPass.gridx = 1; formPass.add(txtPassCu, gbcPass);
+
+        gbcPass.gridx = 0; gbcPass.gridy = 1; formPass.add(new JLabel("Mật khẩu mới:"), gbcPass);
+        txtPassMoi = new JPasswordField(20); gbcPass.gridx = 1; formPass.add(txtPassMoi, gbcPass);
+
+        gbcPass.gridx = 0; gbcPass.gridy = 2; formPass.add(new JLabel("Nhập lại mật khẩu mới:"), gbcPass);
+        txtPassXacNhan = new JPasswordField(20); gbcPass.gridx = 1; formPass.add(txtPassXacNhan, gbcPass);
+
+        JButton btnDoiPass = new JButton("Cập nhật Mật khẩu");
+        gbcPass.gridx = 1; gbcPass.gridy = 3; gbcPass.anchor = GridBagConstraints.EAST;
+        formPass.add(btnDoiPass, gbcPass);
+
+        pnlSecurity.add(formPass, BorderLayout.CENTER);
     }
 }
