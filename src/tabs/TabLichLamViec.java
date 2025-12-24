@@ -512,6 +512,100 @@ public class TabLichLamViec extends JPanel {
         }
     }
 
+    // Hiển thị Dialog chi tiết để chỉnh sửa thủ công cho 1 ngày
+
+    private void showDetailDialog(String date, List<ShiftData> currentShifts) {
+        JDialog dlg = new JDialog(parent, "Quản lý ca ngày: " + date, true);
+        dlg.setSize(600, 400);
+        dlg.setLocationRelativeTo(this);
+        dlg.setLayout(new BorderLayout());
+
+        String[] cols = {"ID", "Mã NV", "Họ Tên", "Ca làm việc", "Ghi chú"};
+
+        //Chặn sửa trực tiếp
+
+    DefaultTableModel model = new DefaultTableModel(cols, 0) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false; 
+    }
+};
+        JTable table = new JTable(model);
+        
+        for (ShiftData s : currentShifts) {
+            String tenNV = "";
+            for (NhanVien nv : danhSachNV) if (nv.getMaNhanVien().equals(s.maNV)) tenNV = nv.getHoTen();
+            model.addRow(new Object[]{s.id, s.maNV, tenNV, s.tenCa, s.ghiChu});
+        }
+        
+        dlg.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        //Panel thêm/xóa
+        JPanel pnlBot = new JPanel(new GridLayout(2, 1));
+        
+        JPanel pnlAdd = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pnlAdd.add(new JLabel("Thêm NV:"));
+        
+        JComboBox<String> cmbNV = new JComboBox<>();
+        for (NhanVien nv : danhSachNV) cmbNV.addItem(nv.getMaNhanVien() + " - " + nv.getHoTen());
+        pnlAdd.add(cmbNV);
+        
+        pnlAdd.add(new JLabel("Ca:"));
+        JComboBox<String> cmbCa = new JComboBox<>();
+        for (CaLamViec c : danhSachCa) cmbCa.addItem(c.toString());
+        pnlAdd.add(cmbCa);
+        
+        JButton btnAdd = new JButton("Thêm / Cập nhật");
+        pnlAdd.add(btnAdd);
+        
+        JPanel pnlDel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnDel = new JButton("Xóa dòng chọn");
+        btnDel.setForeground(Color.RED);
+        pnlDel.add(btnDel);
+        
+        pnlBot.add(pnlAdd);
+        pnlBot.add(pnlDel);
+        dlg.add(pnlBot, BorderLayout.SOUTH);
+
+        //Event logic dialog
+        btnAdd.addActionListener(e -> {
+            String selNV = ((String)cmbNV.getSelectedItem()).split(" - ")[0];
+            String selCa = ((String)cmbCa.getSelectedItem());
+            int maCa = Integer.parseInt(selCa.split(" - ")[0]);
+            
+            try (Connection conn = DatabaseHandler.connect()) {
+                String sql = "INSERT OR REPLACE INTO lich_lam_viec (ma_nv, ngay, ma_ca, ghi_chu) VALUES (?, ?, ?, ?)";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, selNV);
+                pstmt.setString(2, date);
+                pstmt.setInt(3, maCa);
+                pstmt.setString(4, "Thủ công");
+                pstmt.executeUpdate();
+                
+                dlg.dispose();
+                loadDuLieuLichThang(currentMonth, currentYear);
+                refreshCalendar();
+                showDetailDialog(date, mapLichLamViec.get(date)); // Re-open to refresh
+            } catch (SQLException ex) { ex.printStackTrace(); }
+        });
+
+        btnDel.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) return;
+            int id = (int) model.getValueAt(row, 0);
+            
+            try (Connection conn = DatabaseHandler.connect()) {
+                conn.createStatement().executeUpdate("DELETE FROM lich_lam_viec WHERE id=" + id);
+                dlg.dispose();
+                loadDuLieuLichThang(currentMonth, currentYear);
+                refreshCalendar();
+                showDetailDialog(date, mapLichLamViec.get(date));
+            } catch (SQLException ex) { ex.printStackTrace(); }
+        });
+
+        dlg.setVisible(true);
+    }
+
      /*
      * Dialog Tự động xếp ca (Auto Schedule)
      * Tính năng nâng cao: Random hoặc Round-robin
