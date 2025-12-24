@@ -47,4 +47,25 @@ public class TabPhongBan extends JPanel {
         add(new JScrollPane(tableNhanVienTheoPB), BorderLayout.CENTER);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
+
+    public void locNhanVienTheoPhongBan() {
+        if (modelNhanVienTheoPB == null || cmbChonPhongBan == null) return;
+
+        PhongBan selectedPB = (PhongBan) cmbChonPhongBan.getSelectedItem();
+        modelNhanVienTheoPB.setRowCount(0);
+
+        if (selectedPB == null) return;
+    
+        String tenPhongBanChon = selectedPB.getTenPhongBan();
+
+        for (NhanVien nv : danhSachNV) {
+            if (nv.getPhongBan().equals(tenPhongBanChon)) {
+                modelNhanVienTheoPB.addRow(new Object[]{
+                    nv.getMaNhanVien(), nv.getHoTen(),
+                    nv.getSdt(), nv.getEmail(), nv.getNgaySinh(),
+                    nv.getCccd(), nv.getThamNien()
+                });
+            }
+        }
+    }
 }
