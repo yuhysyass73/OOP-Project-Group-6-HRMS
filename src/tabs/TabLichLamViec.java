@@ -218,6 +218,93 @@ public class TabLichLamViec extends JPanel {
         return pnlSide;
     }
 
+    private JPanel createLegendItem(Color c, String text) {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        JLabel icon = new JLabel("     ");
+        icon.setOpaque(true);
+        icon.setBackground(c);
+        icon.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        p.add(icon);
+        p.add(new JLabel(text));
+        return p;
+    }
+
+    // ***LOGIC & RENDERING
+    
+    private void changeMonth(int offset) {
+        currentCalendar.add(Calendar.MONTH, offset);
+        currentMonth = currentCalendar.get(Calendar.MONTH);
+        currentYear = currentCalendar.get(Calendar.YEAR);
+        loadDuLieuLichThang(currentMonth, currentYear);
+        refreshCalendar();
+    }
+
+    private void refreshCalendar() {
+        pnlCalendarGrid.removeAll();
+        
+        lblMonthYear.setText("Tháng " + (currentMonth + 1) + " / " + currentYear);
+
+        Calendar cal = (Calendar) currentCalendar.clone();
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        int startDayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1=CN, 2=T2...
+        int maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        int gridOffset = startDayOfWeek - 1; 
+
+        //Vẽ các ô trống trước ngày 1
+        for (int i = 0; i < gridOffset; i++) {
+            JPanel empty = new JPanel();
+            empty.setBackground(new Color(245, 245, 245));
+            empty.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.LIGHT_GRAY));
+            pnlCalendarGrid.add(empty);
+        }
+
+        //Vẽ các ngày trong tháng
+        String currentFilterNV = null;
+        if (cmbNhanVienFilter.getSelectedIndex() > 0) {
+            String selected = (String) cmbNhanVienFilter.getSelectedItem();
+            currentFilterNV = selected.split(" - ")[0];
+        }
+
+        Calendar today = Calendar.getInstance();
+
+        for (int d = 1; d <= maxDay; d++) {
+            String dateKey = String.format("%02d/%02d/%04d", d, currentMonth + 1, currentYear);
+            List<ShiftData> shifts = mapLichLamViec.getOrDefault(dateKey, new ArrayList<>());
+
+            //Filter logic: Nếu đang lọc NV, chỉ hiển thị shift của NV đó
+            List<ShiftData> displayShifts = new ArrayList<>();
+            if (currentFilterNV != null) {
+                for (ShiftData s : shifts) {
+                    if (s.maNV.equals(currentFilterNV)) displayShifts.add(s);
+                }
+            } else {
+                displayShifts = shifts;
+            }
+
+            boolean isToday = (d == today.get(Calendar.DAY_OF_MONTH) 
+                            && currentMonth == today.get(Calendar.MONTH) 
+                            && currentYear == today.get(Calendar.YEAR));
+
+            DayPanel dayPanel = new DayPanel(d, dateKey, displayShifts, isToday);
+            pnlCalendarGrid.add(dayPanel);
+        }
+
+        //điền nốt các ô trống cuối bảng cho đẹp grid (tổng 42 ô thường dùng cho 6 hàng)
+        int totalSlots = gridOffset + maxDay;
+        int remaining = 42 - totalSlots;
+        if (remaining < 7 && totalSlots <= 35) remaining += 7;
+        
+        for (int i = 0; i < remaining; i++) {
+            JPanel empty = new JPanel();
+            empty.setBackground(new Color(245, 245, 245));
+            empty.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.LIGHT_GRAY));
+            pnlCalendarGrid.add(empty);
+        }
+
+        pnlCalendarGrid.revalidate();
+        pnlCalendarGrid.repaint();
+    }
 
     //INNER CLASSES (CUSTOM COMPONENTS)
 
@@ -303,17 +390,6 @@ public class TabLichLamViec extends JPanel {
                 }
             });
         }
-    }
-
-    private JPanel createLegendItem(Color c, String text) {
-        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        JLabel icon = new JLabel("     ");
-        icon.setOpaque(true);
-        icon.setBackground(c);
-        icon.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        p.add(icon);
-        p.add(new JLabel(text));
-        return p;
     }
 
     private class ShiftData {
