@@ -1,4 +1,5 @@
 package objects;
+
 public class TieuChiKPI {
     private String tenTieuChi;
     private double trongSo;

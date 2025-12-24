@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import MainApp.*;
-import doituong.*;
+import objects.*;
 import objects.NhanVien;
 
 import java.awt.*;

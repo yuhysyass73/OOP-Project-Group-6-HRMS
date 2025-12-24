@@ -8,6 +8,10 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.List;
 
+import MainApp.*;
+import objects.*;
+import dataa.*;
+
 public class TabLuong extends JPanel {
 
     private QuanLyNhanVienGUI parent;

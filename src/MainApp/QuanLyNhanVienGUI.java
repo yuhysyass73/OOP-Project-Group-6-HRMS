@@ -1,3 +1,5 @@
+package MainApp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -6,6 +8,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import objects.*;
+import tabs.*;
 
 public class QuanLyNhanVienGUI extends JFrame {
 
