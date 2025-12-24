@@ -49,5 +49,36 @@ public class TabEmail extends JPanel {
             }
         };
         tableNV = new JTable(modelNV);
+
+        loadNhanVien();
+        
+        pnlLeft.add(new JScrollPane(tableNV), BorderLayout.CENTER);
+        
+        JButton btnSelectAll = new JButton("Chọn tất cả");
+        btnSelectAll.addActionListener(e -> toggleSelection(true));
+        
+        JButton btnDeselectAll = new JButton("Bỏ chọn hết");
+        btnDeselectAll.addActionListener(e -> toggleSelection(false));
+        
+        JPanel pnlBtnSelect = new JPanel(new FlowLayout());
+        pnlBtnSelect.add(btnSelectAll);
+        pnlBtnSelect.add(btnDeselectAll);
+        pnlLeft.add(pnlBtnSelect, BorderLayout.SOUTH);
+
+        //PANEL PHẢI: SOẠN THẢO EMAIL
+        JPanel pnlRight = new JPanel(new BorderLayout(10, 10));
+        pnlRight.setBorder(BorderFactory.createTitledBorder("Soạn thảo Nội dung"));
+
+        //Cấu hình Sender
+        JPanel pnlConfig = new JPanel(new GridLayout(2, 2, 5, 5));
+        pnlConfig.setBorder(BorderFactory.createTitledBorder("Cấu hình Gmail Gửi (Bắt buộc)"));
+        
+        pnlConfig.add(new JLabel("Gmail gửi (VD: admin@gmail.com):"));
+        txtEmailGui = new JTextField("nhanvientest.java@gmail.com");//demo
+        pnlConfig.add(txtEmailGui);
+        
+        pnlConfig.add(new JLabel("Mật khẩu Ứng dụng (App Password):"));
+        txtMatKhauEmail = new JPasswordField();
+        pnlConfig.add(txtMatKhauEmail);
     }
 }
