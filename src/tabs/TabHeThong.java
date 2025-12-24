@@ -89,5 +89,24 @@ public class TabHeThong extends JPanel {
         formPass.add(btnDoiPass, gbcPass);
 
         pnlSecurity.add(formPass, BorderLayout.CENTER);
+
+        //THÔNG TIN HỆ THỐNG (BOTTOM)
+        JPanel pnlInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        String osInfo = System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ")";
+        String javaInfo = System.getProperty("java.version");
+        JLabel lblSys = new JLabel("Hệ thống: " + osInfo + " | Java: " + javaInfo);
+        lblSys.setForeground(Color.GRAY);
+        pnlInfo.add(lblSys);
+
+        JPanel mainCenter = new JPanel(new BorderLayout(10, 10));
+        mainCenter.add(pnlData, BorderLayout.NORTH);
+        mainCenter.add(pnlSecurity, BorderLayout.CENTER);
+
+        add(mainCenter, BorderLayout.CENTER);
+        add(pnlInfo, BorderLayout.SOUTH);
+
+        btnBackup.addActionListener(e -> xuLyBackup());
+        btnRestore.addActionListener(e -> xuLyRestore());
+        btnDoiPass.addActionListener(e -> xuLyDoiMatKhau());
     }
 }
