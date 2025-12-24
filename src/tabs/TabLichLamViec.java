@@ -392,6 +392,128 @@ public class TabLichLamViec extends JPanel {
         }
     }
 
+    //DATA HANDLING & DIALOGS
+
+    private Color getColorForShift(String tenCa) {
+        if (tenCa.toLowerCase().contains("sáng")) return new Color(204, 255, 204);
+        if (tenCa.toLowerCase().contains("chiều")) return new Color(255, 229, 204);
+        if (tenCa.toLowerCase().contains("tối")) return new Color(204, 229, 255);
+        return new Color(240, 240, 240);
+    }
+
+    private String getTenNVNganGon(String maNV) {
+        
+        for (NhanVien nv : danhSachNV) {
+            if (nv.getMaNhanVien().equals(maNV)) {
+                String[] parts = nv.getHoTen().split(" ");
+                return parts[parts.length - 1] + " (" + maNV + ")";
+            }
+        }
+        return maNV;
+    }
+
+    private void loadDanhSachCa() {
+        danhSachCa.clear();
+        try (Connection conn = DatabaseHandler.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM ca_lam_viec")) {
+            while (rs.next()) {
+                danhSachCa.add(new CaLamViec(
+                    rs.getInt("id"),
+                    rs.getString("ten_ca"),
+                    rs.getString("gio_bat_dau"),
+                    rs.getString("gio_ket_thuc")
+                ));
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    private void loadDuLieuLichThang(int month, int year) {
+        mapLichLamViec.clear();
+        String monthStr = String.format("/%02d/%04d", month + 1, year); //Search pattern: "%/MM/yyyy"
+        
+        String sql = "SELECT l.*, c.ten_ca FROM lich_lam_viec l "
+                   + "JOIN ca_lam_viec c ON l.ma_ca = c.id "
+                   + "WHERE l.ngay LIKE ?";
+        
+        try (Connection conn = DatabaseHandler.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, "%" + monthStr);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                String ngay = rs.getString("ngay");
+                ShiftData s = new ShiftData(
+                    rs.getInt("id"),
+                    rs.getString("ma_nv"),
+                    rs.getInt("ma_ca"),
+                    rs.getString("ten_ca"),
+                    rs.getString("ghi_chu")
+                );
+                
+                mapLichLamViec.computeIfAbsent(ngay, k -> new ArrayList<>()).add(s);
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+
+     //Xử lý gán nhanh (Quick Assign) khi click vào ngày
+
+    private void xuLyGanNhanh(String date) {
+        if (cmbCaLamViecQuick.getSelectedItem() == null) return;
+        
+        String caStr = (String) cmbCaLamViecQuick.getSelectedItem();
+        int maCa = Integer.parseInt(caStr.split(" - ")[0]);
+        String tenCa = caStr.split(" - ")[1];
+
+        //Xác định đối tượng gán: Tất cả hay 1 người?
+        String targetNV = null; // null = all
+        if (cmbNhanVienFilter.getSelectedIndex() > 0) {
+            targetNV = ((String)cmbNhanVienFilter.getSelectedItem()).split(" - ")[0];
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Gán " + tenCa + " vào ngày " + date + " cho " + (targetNV == null ? "TOÀN BỘ NV?" : targetNV + "?"),
+            "Xác nhận gán nhanh", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        List<String> listNVToAssign = new ArrayList<>();
+        if (targetNV != null) {
+            listNVToAssign.add(targetNV);
+        } else {
+            for (NhanVien nv : danhSachNV) listNVToAssign.add(nv.getMaNhanVien());
+        }
+
+        // Insert/Update DB
+        int successCount = 0;
+        try (Connection conn = DatabaseHandler.connect()) {
+            String sql = "INSERT OR REPLACE INTO lich_lam_viec (ma_nv, ngay, ma_ca, ghi_chu) VALUES (?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            
+            for (String maNV : listNVToAssign) {
+                pstmt.setString(1, maNV);
+                pstmt.setString(2, date);
+                pstmt.setInt(3, maCa);
+                pstmt.setString(4, "Gán nhanh");
+                pstmt.addBatch();
+                successCount++;
+            }
+            pstmt.executeBatch();
+            
+            parent.ghiNhatKy("Phân ca nhanh", "Ngày: " + date + ", Ca: " + maCa + ", SL: " + successCount);
+            
+            loadDuLieuLichThang(currentMonth, currentYear);
+            refreshCalendar();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi DB: " + e.getMessage());
+        }
+    }
+
+    
+
     private class ShiftData {
         int id;
         String maNV;
