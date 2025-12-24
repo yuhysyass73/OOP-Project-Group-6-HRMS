@@ -145,4 +145,8 @@ public class TabEmail extends JPanel {
             modelNV.setValueAt(check, i, 0);
         }
     }
+
+    private void xuLyGuiEmail() {
+        
+    }
 }
