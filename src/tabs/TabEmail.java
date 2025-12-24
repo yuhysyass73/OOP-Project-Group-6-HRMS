@@ -80,5 +80,25 @@ public class TabEmail extends JPanel {
         pnlConfig.add(new JLabel("Mật khẩu Ứng dụng (App Password):"));
         txtMatKhauEmail = new JPasswordField();
         pnlConfig.add(txtMatKhauEmail);
+
+        //Form soạn thảo
+        JPanel pnlCompose = new JPanel(new BorderLayout(5, 5));
+        JPanel pnlSubject = new JPanel(new BorderLayout());
+        pnlSubject.add(new JLabel("Tiêu đề: "), BorderLayout.WEST);
+        txtTieuDe = new JTextField("Thông báo từ Ban Giám Đốc");
+        pnlSubject.add(txtTieuDe, BorderLayout.CENTER);
+
+        txtNoiDung = new JTextArea("Kính gửi nhân viên,\n\nĐây là email thông báo về việc...\n\nTrân trọng,\nPhòng Nhân sự.");
+        txtNoiDung.setLineWrap(true);
+
+        pnlCompose.add(pnlConfig, BorderLayout.NORTH);
+        pnlCompose.add(pnlSubject, BorderLayout.CENTER);
+
+        JPanel pnlContent = new JPanel(new BorderLayout(hgap: 5, vgap: 5));
+        pnlContent.add(pnlSubject, BorderLayout.NORTH);
+        pnlContent.add(new JScrollPane(txtNoiDung), BorderLayout.CENTER);
+
+        pnlRight.add(pnlConfig, BorderLayout.NORTH);
+        pnlRight.add(pnlContent, BorderLayout.CENTER);
     }
 }
