@@ -95,7 +95,7 @@ public class TabEmail extends JPanel {
         pnlCompose.add(pnlConfig, BorderLayout.NORTH);
         pnlCompose.add(pnlSubject, BorderLayout.CENTER);
 
-        JPanel pnlContent = new JPanel(new BorderLayout(hgap: 5, vgap: 5));
+        JPanel pnlContent = new JPanel(new BorderLayout(5,5));
         pnlContent.add(pnlSubject, BorderLayout.NORTH);
         pnlContent.add(new JScrollPane(txtNoiDung), BorderLayout.CENTER);
 

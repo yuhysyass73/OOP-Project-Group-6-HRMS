@@ -68,7 +68,7 @@ public class TabHeThong extends JPanel {
 
         //ĐỔI MẬT KHẨU
         JPanel pnlSecurity = new JPanel(new BorderLayout());
-        pnlSecurity.setBorder(BorderFactory.createTitledBorder(title: "Bảo mật & Tài khoản"));
+        pnlSecurity.setBorder(BorderFactory.createTitledBorder("Bảo mật & Tài khoản"));
 
         JPanel formPass = new JPanel(new GridBagLayout());
         GridBagConstraints gbcPass = new GridBagConstraints();

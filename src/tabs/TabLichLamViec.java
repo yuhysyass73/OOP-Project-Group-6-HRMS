@@ -228,4 +228,37 @@ public class TabLichLamViec extends JPanel {
         p.add(new JLabel(text));
         return p;
     }
+
+    private class ShiftData {
+        int id;
+        String maNV;
+        int maCa;
+        String tenCa;
+        String ghiChu;
+
+        public ShiftData(int id, String maNV, int maCa, String tenCa, String ghiChu) {
+            this.id = id;
+            this.maNV = maNV;
+            this.maCa = maCa;
+            this.tenCa = tenCa;
+            this.ghiChu = ghiChu;
+        }
+    }
+
+    private class CaLamViec {
+        int id;
+        String tenCa;
+        String gioVao, gioRa;
+
+        public CaLamViec(int id, String tenCa, String gioVao, String gioRa) {
+            this.id = id;
+            this.tenCa = tenCa;
+            this.gioVao = gioVao;
+            this.gioRa = gioRa;
+        }
+        @Override
+        public String toString() {
+            return id + " - " + tenCa;
+        }
+    }
 }
