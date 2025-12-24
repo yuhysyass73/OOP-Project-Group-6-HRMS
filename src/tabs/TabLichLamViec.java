@@ -512,7 +512,116 @@ public class TabLichLamViec extends JPanel {
         }
     }
 
-    
+     /*
+     * Dialog Tự động xếp ca (Auto Schedule)
+     * Tính năng nâng cao: Random hoặc Round-robin
+     */
+    private void showAutoScheduleDialog() {
+        JDialog dlg = new JDialog(parent, "Tự động xếp lịch", true);
+        dlg.setSize(400, 300);
+        dlg.setLocationRelativeTo(this);
+        dlg.setLayout(new GridBagLayout());
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        dlg.add(new JLabel("Chọn khoảng thời gian cần xếp tự động:"), gbc);
+        
+        gbc.gridy++;
+        JPanel pnlDate = new JPanel(new FlowLayout());
+        JTextField txtFrom = new JTextField(10); 
+        JTextField txtTo = new JTextField(10);
+        //Default: Tuần tới
+        Calendar c = Calendar.getInstance();
+        txtFrom.setText(sdfDb.format(c.getTime()));
+        c.add(Calendar.DAY_OF_YEAR, 7);
+        txtTo.setText(sdfDb.format(c.getTime()));
+        
+        pnlDate.add(new JLabel("Từ:")); pnlDate.add(txtFrom);
+        pnlDate.add(new JLabel("Đến:")); pnlDate.add(txtTo);
+        dlg.add(pnlDate, gbc);
+
+        gbc.gridy++;
+        JCheckBox chkSkipSunday = new JCheckBox("Bỏ qua Chủ Nhật", true);
+        dlg.add(chkSkipSunday, gbc);
+
+        gbc.gridy++;
+        JCheckBox chkClearOld = new JCheckBox("Xóa lịch cũ trong khoảng này", true);
+        dlg.add(chkClearOld, gbc);
+
+        gbc.gridy++;
+        JButton btnRun = new JButton("BẮT ĐẦU XẾP CA");
+        btnRun.setBackground(new Color(0, 153, 76));
+        btnRun.setForeground(Color.WHITE);
+        dlg.add(btnRun, gbc);
+
+        btnRun.addActionListener(e -> {
+            try {
+                Date d1 = sdfDb.parse(txtFrom.getText());
+                Date d2 = sdfDb.parse(txtTo.getText());
+                if (d2.before(d1)) throw new Exception("Ngày kết thúc < Ngày bắt đầu");
+                
+                //Logic xếp ca giả lập (Round-robin)
+                //Duyệt từng ngày, mỗi ngày duyệt list NV, gán lần lượt Ca Sáng -> Ca Chiều
+                Connection conn = DatabaseHandler.connect();
+                conn.setAutoCommit(false); // Transaction
+                
+                if (chkClearOld.isSelected()) {
+                    // Delete old
+                }
+
+                Calendar calRun = Calendar.getInstance();
+                calRun.setTime(d1);
+                
+                int caIndex = 0; //Để xoay vòng ca
+                int totalAssigned = 0;
+
+                while (!calRun.getTime().after(d2)) {
+                    //Check Sunday
+                    if (chkSkipSunday.isSelected() && calRun.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                        calRun.add(Calendar.DAY_OF_YEAR, 1);
+                        continue;
+                    }
+
+                    String dateStr = sdfDb.format(calRun.getTime());
+                    
+                    for (NhanVien nv : danhSachNV) {
+                        // Logic random đơn giản: Mỗi người 1 ca/ngày
+                        // Ca 1 (Sáng), Ca 2 (Chiều)
+                        CaLamViec caToAssign = danhSachCa.get(caIndex % 2);
+                        
+                        String sql = "INSERT OR REPLACE INTO lich_lam_viec (ma_nv, ngay, ma_ca, ghi_chu) VALUES (?, ?, ?, ?)";
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, nv.getMaNhanVien());
+                        pstmt.setString(2, dateStr);
+                        pstmt.setInt(3, caToAssign.id);
+                        pstmt.setString(4, "Auto-Scheduler");
+                        pstmt.executeUpdate();
+                        
+                        caIndex++;
+                        totalAssigned++;
+                    }
+                    //Reset index mỗi ngày để xoay vòng công bằng hơn (hoặc giữ nguyên)
+                    //caIndex++; 
+                    calRun.add(Calendar.DAY_OF_YEAR, 1);
+                }
+                
+                conn.commit();
+                conn.close();
+                JOptionPane.showMessageDialog(dlg, "Đã xếp xong " + totalAssigned + " lượt ca!");
+                dlg.dispose();
+                loadDuLieuLichThang(currentMonth, currentYear);
+                refreshCalendar();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(dlg, "Lỗi: " + ex.getMessage());
+            }
+        });
+
+        dlg.setVisible(true);
+    }
 
     private class ShiftData {
         int id;
