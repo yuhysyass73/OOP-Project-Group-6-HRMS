@@ -1,3 +1,5 @@
+package MainApp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -7,11 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import objects.*;
+import tabs.*;
+
 public class QuanLyNhanVienGUI extends JFrame {
 
-    List<NhanVien> danhSachNV;
-    List<PhongBan> danhSachPB;
-    List<DuAn> danhSachDuAn;
+    public List<NhanVien> danhSachNV;
+    public List<PhongBan> danhSachPB;
+    public List<DuAn> danhSachDuAn;
 
     private TabNhanVien tabNhanVien;
     private TabPhongBan tabPhongBan;
@@ -20,7 +25,7 @@ public class QuanLyNhanVienGUI extends JFrame {
     private TabLuong tabLuong;
     private TabBaoCao tabBaoCao;
     
-    NumberFormat currencyFormatter;
+    public NumberFormat currencyFormatter;
 
     private String adminUsername = "admin";
     private String adminPassword = "admin";

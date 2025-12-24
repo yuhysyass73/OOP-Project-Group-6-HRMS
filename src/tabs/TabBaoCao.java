@@ -1,9 +1,14 @@
+package tabs;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import MainApp.*;
+import objects.*;
 
 public class TabBaoCao extends JPanel {
     private QuanLyNhanVienGUI parent;

@@ -1,3 +1,5 @@
+package tabs;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -6,6 +8,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+
+import MainApp.*;
+import objects.*;
 
 public class TabNhanVien extends JPanel {
 

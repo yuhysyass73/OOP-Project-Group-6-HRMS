@@ -1,3 +1,5 @@
+package objects;
+
 public class NhanVien {
     //cac thuoc tinh cua 1 nhan vien
     private String hoTen;

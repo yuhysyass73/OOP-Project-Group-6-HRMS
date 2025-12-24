@@ -1,11 +1,17 @@
+package tabs;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import MainApp.*;
+import objects.*;
+
 import java.awt.*;
 import java.util.List;
 
 
 public class TabPhongBan extends JPanel {
-  
+      
     private QuanLyNhanVienGUI parent;
     private List<NhanVien> danhSachNV;
     private List<PhongBan> danhSachPB;
@@ -14,20 +20,23 @@ public class TabPhongBan extends JPanel {
     private DefaultTableModel modelNhanVienTheoPB;
     private JTable tableNhanVienTheoPB;
 
+
     public TabPhongBan(QuanLyNhanVienGUI parent) {
         this.parent = parent;
         this.danhSachNV = parent.danhSachNV;
         this.danhSachPB = parent.danhSachPB;
-        
+
         setLayout(new BorderLayout(10, 10));
-        
+
+        // giao diện phòng ban
         JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         selectPanel.add(new JLabel("Chọn phòng ban để xem nhân viên:"));
         cmbChonPhongBan = new JComboBox<>();
         cmbChonPhongBan.addActionListener(e -> locNhanVienTheoPhongBan());
         selectPanel.add(cmbChonPhongBan);
         add(selectPanel, BorderLayout.NORTH);
-
+    
+        // thông tin nhân viên phòng ban
         String[] columnNamesNV = {"Mã NV", "Họ Tên", "SĐT", "Email", "Ngày sinh", "CCCD", "Thâm niên (năm)"};
         modelNhanVienTheoPB = new DefaultTableModel(columnNamesNV, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
@@ -38,18 +47,16 @@ public class TabPhongBan extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
-
-    
     public void locNhanVienTheoPhongBan() {
         if (modelNhanVienTheoPB == null || cmbChonPhongBan == null) return;
-        
+
         PhongBan selectedPB = (PhongBan) cmbChonPhongBan.getSelectedItem();
         modelNhanVienTheoPB.setRowCount(0);
-        
+
         if (selectedPB == null) return;
     
         String tenPhongBanChon = selectedPB.getTenPhongBan();
-    
+
         for (NhanVien nv : danhSachNV) {
             if (nv.getPhongBan().equals(tenPhongBanChon)) {
                 modelNhanVienTheoPB.addRow(new Object[]{
@@ -60,7 +67,7 @@ public class TabPhongBan extends JPanel {
             }
         }
     }
-    
+
     public void updatePhongBanComboBox() {
         if (cmbChonPhongBan == null) return;
         cmbChonPhongBan.removeAllItems();
