@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import MainApp.*;
 import objects.*;
-import dataa.*;
 
 public class TabBaoCao extends JPanel {
     private QuanLyNhanVienGUI parent;
