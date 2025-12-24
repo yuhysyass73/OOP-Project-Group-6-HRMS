@@ -28,5 +28,13 @@ public class TabPhongBan extends JPanel {
         this.danhSachPB = parent.danhSachPB;
 
         setLayout(new BorderLayout(10, 10));
+
+        // giao diện phòng ban
+        JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectPanel.add(new JLabel("Chọn phòng ban để xem nhân viên:"));
+        cmbChonPhongBan = new JComboBox<>();
+        cmbChonPhongBan.addActionListener(e -> locNhanVienTheoPhongBan());
+        selectPanel.add(cmbChonPhongBan);
+        add(selectPanel, BorderLayout.NORTH);
     }
 }
