@@ -27,4 +27,27 @@ public class TabEmail extends JPanel {
     private JLabel lblStatus;
 
     private JButton btnGui;
+
+    public TabEmail(QuanLyNhanVienGUI parent) {
+        this.parent = parent;
+        this.danhSachNV = parent.danhSachNV;
+
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        //DANH SÁCH NHÂN VIÊN
+        JPanel pnlLeft = new JPanel(new BorderLayout());
+        pnlLeft.setBorder(BorderFactory.createTitledBorder("Chọn Nhân viên nhận mail"));
+        pnlLeft.setPreferredSize(new Dimension(400, 0));
+
+        String[] cols = {"Chọn", "Mã NV", "Họ Tên", "Email"};
+        modelNV = new DefaultTableModel(cols, 0) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if(columnIndex == 0) return Boolean.class;
+                return super.getColumnClass(columnIndex);
+            }
+        };
+        tableNV = new JTable(modelNV);
+    }
 }
