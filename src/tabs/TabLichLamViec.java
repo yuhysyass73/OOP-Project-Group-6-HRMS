@@ -218,6 +218,93 @@ public class TabLichLamViec extends JPanel {
         return pnlSide;
     }
 
+
+    //INNER CLASSES (CUSTOM COMPONENTS)
+
+    /**
+     * DayPanel: Đại diện cho 1 ô ngày trên lịch
+     * Chịu trách nhiệm render danh sách ca làm việc
+     */
+    private class DayPanel extends JPanel {
+        private int day;
+        private String dateStr;
+        private List<ShiftData> shifts;
+
+        public DayPanel(int day, String dateStr, List<ShiftData> shifts, boolean isToday) {
+            this.day = day;
+            this.dateStr = dateStr;
+            this.shifts = shifts;
+            
+            setLayout(new BorderLayout());
+            setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+            setBackground(Color.WHITE);
+
+            //Header ngày
+            JLabel lblDay = new JLabel(String.valueOf(day) + "  ", SwingConstants.RIGHT);
+            lblDay.setFont(new Font("Arial", isToday ? Font.BOLD : Font.PLAIN, 14));
+            if (isToday) {
+                lblDay.setForeground(Color.RED);
+                setBorder(BorderFactory.createLineBorder(COL_TODAY_BORDER, 2));
+            }
+            add(lblDay, BorderLayout.NORTH);
+
+            //Body: Danh sách Shift (Vẽ tối đa 3 dòng, còn lại hiện +...)
+            JPanel pnlShifts = new JPanel();
+            pnlShifts.setLayout(new BoxLayout(pnlShifts, BoxLayout.Y_AXIS));
+            pnlShifts.setBackground(Color.WHITE);
+            pnlShifts.setBorder(new EmptyBorder(2, 2, 2, 2));
+
+            int count = 0;
+            for (ShiftData s : shifts) {
+                if (count >= 3) {
+                    JLabel more = new JLabel("+" + (shifts.size() - 3) + " khác...");
+                    more.setFont(new Font("Arial", Font.ITALIC, 10));
+                    more.setForeground(Color.GRAY);
+                    pnlShifts.add(more);
+                    break;
+                }
+                
+                //Vẽ 1 dòng shift: [Sáng] NV001
+                JPanel row = new JPanel(new BorderLayout());
+                row.setOpaque(true);
+                row.setBackground(getColorForShift(s.tenCa));
+                row.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
+                
+                String shortName = getTenNVNganGon(s.maNV);
+                JLabel lblInfo = new JLabel(shortName);
+                lblInfo.setFont(new Font("Arial", Font.PLAIN, 10));
+                       
+                row.add(lblInfo, BorderLayout.CENTER);
+                pnlShifts.add(row);
+                pnlShifts.add(Box.createVerticalStrut(1));
+                count++;
+            }
+            add(pnlShifts, BorderLayout.CENTER);
+
+            //Event Click
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (chkCheDoGanNhanh.isSelected()) {
+                        xuLyGanNhanh(dateStr);
+                    } else {
+                        showDetailDialog(dateStr, shifts);
+                    }
+                }
+                
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    setBackground(new Color(240, 248, 255));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    setBackground(Color.WHITE);
+                }
+            });
+        }
+    }
+
     private JPanel createLegendItem(Color c, String text) {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         JLabel icon = new JLabel("     ");
