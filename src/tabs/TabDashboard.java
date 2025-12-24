@@ -1,3 +1,4 @@
+package tabs;
 
 import javax.swing.*;
 
