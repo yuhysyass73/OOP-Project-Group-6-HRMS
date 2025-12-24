@@ -100,5 +100,37 @@ public class TabEmail extends JPanel {
 
         pnlRight.add(pnlConfig, BorderLayout.NORTH);
         pnlRight.add(pnlContent, BorderLayout.CENTER);
+
+        //PANEL DƯỚI: NÚT GỬI & TIẾN ĐỘ
+        JPanel pnlBottom = new JPanel(new BorderLayout(5, 5));
+        
+        btnGui = new JButton("GỬI EMAIL HÀNG LOẠT");
+        btnGui.setBackground(new Color(0, 102, 204));
+        btnGui.setForeground(Color.WHITE);
+        btnGui.setFont(new Font("Arial", Font.BOLD, 14));
+        btnGui.addActionListener(e -> xuLyGuiEmail());
+        
+        progressBar = new JProgressBar();
+        progressBar.setStringPainted(true);
+        lblStatus = new JLabel("Trạng thái: Chờ lệnh gửi...");
+
+        JPanel pnlProgress = new JPanel(new BorderLayout());
+        pnlProgress.add(lblStatus, BorderLayout.NORTH);
+        pnlProgress.add(progressBar, BorderLayout.CENTER);
+
+        pnlBottom.add(btnGui, BorderLayout.WEST);
+        pnlBottom.add(pnlProgress, BorderLayout.CENTER);
+
+        add(pnlLeft, BorderLayout.WEST);
+        add(pnlRight, BorderLayout.CENTER);
+        add(pnlBottom, BorderLayout.SOUTH);
     }
+
+    private void loadNhanVien() {
+        modelNV.setRowCount(0);
+        for (NhanVien nv : danhSachNV) {
+            modelNV.addRow(new Object[]{false, nv.getMaNhanVien(), nv.getHoTen(), nv.getEmail()});
+        }
+    }
+    
 }
