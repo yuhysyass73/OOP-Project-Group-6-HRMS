@@ -5,6 +5,7 @@ import javax.swing.table.DefaultTableModel;
 
 import MainApp.*;
 import doituong.*;
+import objects.NhanVien;
 
 import java.awt.*;
 import java.util.List;
@@ -133,4 +134,15 @@ public class TabEmail extends JPanel {
         }
     }
     
+    public void capNhatDanhSachNhanVien(List<NhanVien> listMoi) {
+        this.danhSachNV = listMoi;
+        loadNhanVien();
+        System.out.println("Tab Email đã cập nhật danh sách: " + listMoi.size() + " nhân viên.");
+    }
+
+    private void toggleSelection(boolean check) {
+        for (int i = 0; i < modelNV.getRowCount(); i++) {
+            modelNV.setValueAt(check, i, 0);
+        }
+    }
 }
