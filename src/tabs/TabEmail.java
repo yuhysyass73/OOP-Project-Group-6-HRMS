@@ -191,5 +191,31 @@ public class TabEmail extends JPanel {
                     return new PasswordAuthentication(fromEmail, password);
                 }
             });
+
+            int countSuccess = 0;
+
+            for (int i = 0; i < recipients.size(); i++) {
+                String toEmail = recipients.get(i);
+                final int currentProgress = i + 1;
+                
+                SwingUtilities.invokeLater(() -> lblStatus.setText("Đang gửi tới: " + toEmail + "..."));
+
+                try {
+                    Message message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress(fromEmail));
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+                    message.setSubject(subject);
+                    message.setText(content);
+
+                    Transport.send(message);
+                    countSuccess++;
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Lỗi gửi tới " + toEmail + ": " + e.getMessage());
+                }
+                
+                SwingUtilities.invokeLater(() -> progressBar.setValue(currentProgress));
+            }
     }
 }
