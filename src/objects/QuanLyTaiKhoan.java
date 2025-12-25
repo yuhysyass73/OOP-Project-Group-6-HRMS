@@ -1,5 +1,4 @@
 package objects;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -12,6 +11,7 @@ import java.util.Base64;
 import dataa.DatabaseHandler;
 
 public class QuanLyTaiKhoan {
+
     public QuanLyTaiKhoan() {
         if (!kiemTraUserTonTai("admin")) {
             themTaiKhoan("admin", "admin", "admin");
@@ -109,5 +109,19 @@ public class QuanLyTaiKhoan {
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         return Base64.getEncoder().encodeToString(salt);
+    }
+    //kiểm tra nếu là role admin thì trả về true
+    public boolean isAdmin(String username) {
+        String sql = "SELECT role FROM tai_khoan WHERE username = ?";
+        try (Connection conn = DatabaseHandler.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "admin".equals(role);
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
     }
 }

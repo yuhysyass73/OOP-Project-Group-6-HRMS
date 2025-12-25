@@ -5,7 +5,6 @@ import javax.swing.table.DefaultTableModel;
 
 import MainApp.*;
 import objects.*;
-import objects.NhanVien;
 
 import java.awt.*;
 import java.util.List;
@@ -26,8 +25,8 @@ public class TabEmail extends JPanel {
     private JTextField txtEmailGui;
     private JProgressBar progressBar;
     private JLabel lblStatus;
-
-    private JButton btnGui;
+    
+    private JButton btnGui; 
 
     public TabEmail(QuanLyNhanVienGUI parent) {
         this.parent = parent;
@@ -50,15 +49,8 @@ public class TabEmail extends JPanel {
             }
         };
         tableNV = new JTable(modelNV);
-
-        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentShown(java.awt.event.ComponentEvent e) {
-                danhSachNV = parent.danhSachNV; 
-                loadNhanVien();
-                System.out.println("Tab Email vừa được mở - Đã cập nhật danh sách: " + danhSachNV.size() + " người.");
-            }
-        });
+        
+        loadNhanVien();
         
         pnlLeft.add(new JScrollPane(tableNV), BorderLayout.CENTER);
         
@@ -88,24 +80,24 @@ public class TabEmail extends JPanel {
         pnlConfig.add(new JLabel("Mật khẩu Ứng dụng (App Password):"));
         txtMatKhauEmail = new JPasswordField();
         pnlConfig.add(txtMatKhauEmail);
-
+        
         //Form soạn thảo
         JPanel pnlCompose = new JPanel(new BorderLayout(5, 5));
         JPanel pnlSubject = new JPanel(new BorderLayout());
         pnlSubject.add(new JLabel("Tiêu đề: "), BorderLayout.WEST);
         txtTieuDe = new JTextField("Thông báo từ Ban Giám Đốc");
         pnlSubject.add(txtTieuDe, BorderLayout.CENTER);
-
+        
         txtNoiDung = new JTextArea("Kính gửi nhân viên,\n\nĐây là email thông báo về việc...\n\nTrân trọng,\nPhòng Nhân sự.");
         txtNoiDung.setLineWrap(true);
-
+        
         pnlCompose.add(pnlConfig, BorderLayout.NORTH);
         pnlCompose.add(pnlSubject, BorderLayout.CENTER);
-
-        JPanel pnlContent = new JPanel(new BorderLayout(5,5));
+        
+        JPanel pnlContent = new JPanel(new BorderLayout(5, 5));
         pnlContent.add(pnlSubject, BorderLayout.NORTH);
         pnlContent.add(new JScrollPane(txtNoiDung), BorderLayout.CENTER);
-
+        
         pnlRight.add(pnlConfig, BorderLayout.NORTH);
         pnlRight.add(pnlContent, BorderLayout.CENTER);
 
@@ -141,12 +133,6 @@ public class TabEmail extends JPanel {
         }
     }
     
-    public void capNhatDanhSachNhanVien(List<NhanVien> listMoi) {
-        this.danhSachNV = listMoi;
-        loadNhanVien();
-        System.out.println("Tab Email đã cập nhật danh sách: " + listMoi.size() + " nhân viên.");
-    }
-
     private void toggleSelection(boolean check) {
         for (int i = 0; i < modelNV.getRowCount(); i++) {
             modelNV.setValueAt(check, i, 0);
@@ -200,13 +186,12 @@ public class TabEmail extends JPanel {
             });
 
             int countSuccess = 0;
-
             for (int i = 0; i < recipients.size(); i++) {
                 String toEmail = recipients.get(i);
                 final int currentProgress = i + 1;
                 
                 SwingUtilities.invokeLater(() -> lblStatus.setText("Đang gửi tới: " + toEmail + "..."));
-
+                
                 try {
                     Message message = new MimeMessage(session);
                     message.setFrom(new InternetAddress(fromEmail));

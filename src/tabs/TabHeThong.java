@@ -23,13 +23,13 @@ public class TabHeThong extends JPanel {
     private JPasswordField txtPassMoi;
     private JPasswordField txtPassXacNhan;
 
-
+    
     private static final String DB_SOURCE = "quanlynhansu.db";
 
     public TabHeThong(QuanLyNhanVienGUI parent) {
         this.parent = parent;
         this.quanLyTaiKhoan = new QuanLyTaiKhoan();
-
+        
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -42,7 +42,7 @@ public class TabHeThong extends JPanel {
         JButton btnBackup = new JButton("Sao lưu Dữ liệu (Backup)");
         btnBackup.setIcon(UIManager.getIcon("FileView.floppyDriveIcon"));
         btnBackup.setBackground(new Color(0, 102, 204));
-        btnBackup.setForeground(Color.WHITE);
+        btnBackup.setForeground(Color.RED);
         btnBackup.setFont(new Font("Arial", Font.BOLD, 14));
         
         JLabel lblBackupInfo = new JLabel("<html><center>Sao chép toàn bộ dữ liệu hiện tại<br/>ra file dự phòng an toàn.</center></html>");
@@ -55,7 +55,7 @@ public class TabHeThong extends JPanel {
         JButton btnRestore = new JButton("Phục hồi Dữ liệu (Restore)");
         btnRestore.setIcon(UIManager.getIcon("FileView.computerIcon"));
         btnRestore.setBackground(new Color(204, 0, 0));
-        btnRestore.setForeground(Color.WHITE);
+        btnRestore.setForeground(Color.RED);
         btnRestore.setFont(new Font("Arial", Font.BOLD, 14));
         
         JLabel lblRestoreInfo = new JLabel("<html><center>Khôi phục dữ liệu từ file đã lưu.<br/>(Cảnh báo: Dữ liệu hiện tại sẽ mất)</center></html>");
@@ -69,7 +69,7 @@ public class TabHeThong extends JPanel {
         //ĐỔI MẬT KHẨU
         JPanel pnlSecurity = new JPanel(new BorderLayout());
         pnlSecurity.setBorder(BorderFactory.createTitledBorder("Bảo mật & Tài khoản"));
-
+        
         JPanel formPass = new JPanel(new GridBagLayout());
         GridBagConstraints gbcPass = new GridBagConstraints();
         gbcPass.insets = new Insets(5, 5, 5, 5);
@@ -89,7 +89,7 @@ public class TabHeThong extends JPanel {
         formPass.add(btnDoiPass, gbcPass);
 
         pnlSecurity.add(formPass, BorderLayout.CENTER);
-
+        
         //THÔNG TIN HỆ THỐNG (BOTTOM)
         JPanel pnlInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         String osInfo = System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ")";
@@ -110,6 +110,7 @@ public class TabHeThong extends JPanel {
         btnDoiPass.addActionListener(e -> xuLyDoiMatKhau());
     }
 
+    //Yêu cầu xác thực mật khẩu trước khi thực hiện hành động nhạy cảm
     private boolean yeuCauXacThuc() {
         String currentUser = parent.getCurrentUser();
         if (currentUser == null || currentUser.isEmpty()) {
@@ -136,9 +137,16 @@ public class TabHeThong extends JPanel {
     }
 
     private void xuLyBackup() {
+
+        // nếu không phải admin thì hiện thông báo và return
+        if(!quanLyTaiKhoan.isAdmin(parent.getCurrentUser())) {
+            JOptionPane.showMessageDialog(this, "Chỉ có Quản trị viên mới được phép sao lưu dữ liệu!", "Cảnh báo bảo mật", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         //Thêm lớp bảo mật
         if (!yeuCauXacThuc()) return;
-
+        
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn nơi lưu file Backup");
         fileChooser.setSelectedFile(new File("backup_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".db"));
@@ -164,8 +172,14 @@ public class TabHeThong extends JPanel {
     }
 
     private void xuLyRestore() {
+        // nếu không phải admin thì hiện thông báo và return
+        if(!quanLyTaiKhoan.isAdmin(parent.getCurrentUser())) {
+            JOptionPane.showMessageDialog(this, "Chỉ có Quản trị viên mới được phép phục hồi dữ liệu!", "Cảnh báo bảo mật", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         //Thêm lớp bảo mật
         if (!yeuCauXacThuc()) return;
+        
 
         int confirm = JOptionPane.showConfirmDialog(this, 
             "CẢNH BÁO: Dữ liệu hiện tại sẽ bị ghi đè hoàn toàn bởi file backup.\nBạn có chắc chắn muốn tiếp tục?", 
@@ -226,5 +240,4 @@ public class TabHeThong extends JPanel {
             JOptionPane.showMessageDialog(this, "Mật khẩu cũ không đúng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
 }

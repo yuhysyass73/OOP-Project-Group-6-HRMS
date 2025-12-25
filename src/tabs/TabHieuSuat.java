@@ -1,11 +1,14 @@
 package tabs;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import MainApp.*;
 import dataa.*;
 import objects.*;
+import ui.components.*;
 
 import java.awt.*;
 import java.sql.*;
@@ -23,16 +26,14 @@ public class TabHieuSuat extends JPanel {
     private DefaultTableModel modelChamCong;
     private JTable tableChamCong;
     private JLabel lblStatusCheckIn;
-    
-    private JButton btnCheckIn;
-    private JButton btnCheckOut;
-    private JButton btnRefresh;
+    private ModernButton btnCheckIn, btnCheckOut, btnRefresh;
 
     private JTextField txtMaNVNghi;
     private JTextField txtTuNgay, txtDenNgay;
     private JTextArea txtLyDo;
     private DefaultTableModel modelNghiPhep;
     private JTable tableNghiPhep;
+    private ModernButton btnGuiDon, btnLoadDon;
 
     private JTextField txtMaNVViPham;
     private JRadioButton radioDiMuon;
@@ -40,13 +41,19 @@ public class TabHieuSuat extends JPanel {
     private ButtonGroup groupViPham;
     private DefaultTableModel modelLichSuViPham;
     private JTable tableLichSuViPham;
+    private ModernButton btnPhat;
 
     public TabHieuSuat(QuanLyNhanVienGUI parent) {
         this.parent = parent;
         this.danhSachNV = parent.danhSachNV; 
-        setLayout(new BorderLayout());
+        
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(241, 245, 249));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
         
         JTabbedPane tabSub = new JTabbedPane();
+        tabSub.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        tabSub.setBackground(Color.WHITE);
         
         JPanel pnlChamCong = createPanelChamCong();
         JPanel pnlNghiPhep = createPanelNghiPhep();
@@ -60,67 +67,294 @@ public class TabHieuSuat extends JPanel {
     }
 
     //CHẤM CÔNG
-    
+
     private JPanel createPanelChamCong() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
+        panel.setBackground(new Color(241, 245, 249));
+        panel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        JPanel inputPanel = new JPanel(new GridBagLayout());
-        inputPanel.setBorder(BorderFactory.createTitledBorder("Ghi nhận Chấm công"));
+        RoundedPanel inputPanel = new RoundedPanel(15, Color.WHITE);
+        inputPanel.setLayout(new GridBagLayout());
+        
+        JLabel lblTitle = new JLabel("GHI NHẬN CHẤM CÔNG");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitle.setForeground(new Color(30, 41, 59));
+        
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10); 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0; inputPanel.add(new JLabel("Chọn Ca làm việc:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        inputPanel.add(lblTitle, gbc);
+
+        gbc.gridy = 1; gbc.gridwidth = 1;
+        inputPanel.add(createLabel("Chọn Ca làm việc:"), gbc);
         gbc.gridx = 1; 
         cmbCaLamViec = new JComboBox<>();
+        cmbCaLamViec.setBackground(Color.WHITE);
+        cmbCaLamViec.setPreferredSize(new Dimension(300, 35));
         loadDanhSachCa();
         inputPanel.add(cmbCaLamViec, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; inputPanel.add(new JLabel("Mã Nhân viên:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 2;
+        inputPanel.add(createLabel("Mã Nhân viên:"), gbc);
         gbc.gridx = 1; 
         txtMaNVChamCong = new JTextField(15);
-        
+        setupTextField(txtMaNVChamCong);
         txtMaNVChamCong.addActionListener(e -> xuLyCheckIn());
         inputPanel.add(txtMaNVChamCong, gbc);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        btnCheckIn = new JButton("CHECK-IN (Vào)");
-        btnCheckIn.setBackground(new Color(0, 153, 76)); btnCheckIn.setForeground(Color.WHITE);
+        btnPanel.setOpaque(false);
         
-        btnCheckOut = new JButton("CHECK-OUT (Ra)");
-        btnCheckOut.setBackground(new Color(204, 0, 0)); btnCheckOut.setForeground(Color.WHITE);
+        btnCheckIn = new ModernButton("CHECK-IN (Vào)", new Color(22, 163, 74), new Color(21, 128, 61));
+        btnCheckIn.setPreferredSize(new Dimension(140, 40));
+        
+        btnCheckOut = new ModernButton("CHECK-OUT (Ra)", new Color(220, 38, 38), new Color(185, 28, 28));
+        btnCheckOut.setPreferredSize(new Dimension(140, 40));
 
         btnPanel.add(btnCheckIn);
-        btnPanel.add(Box.createHorizontalStrut(10));
+        btnPanel.add(Box.createHorizontalStrut(15));
         btnPanel.add(btnCheckOut);
         
-        gbc.gridx = 1; gbc.gridy = 2; inputPanel.add(btnPanel, gbc);
+        gbc.gridx = 1; gbc.gridy = 3; 
+        inputPanel.add(btnPanel, gbc);
 
         lblStatusCheckIn = new JLabel("Vui lòng nhập Mã NV để chấm công.");
-        lblStatusCheckIn.setFont(new Font("Arial", Font.ITALIC, 12));
-        lblStatusCheckIn.setForeground(Color.BLUE);
-        gbc.gridx = 1; gbc.gridy = 3; inputPanel.add(lblStatusCheckIn, gbc);
+        lblStatusCheckIn.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        lblStatusCheckIn.setForeground(new Color(37, 99, 235));
+        gbc.gridx = 1; gbc.gridy = 4; 
+        inputPanel.add(lblStatusCheckIn, gbc);
 
         panel.add(inputPanel, BorderLayout.NORTH);
 
-        //Bảng dữ liệu
         String[] cols = {"ID", "Ngày", "Mã NV", "Ca", "Giờ Vào", "Giờ Ra"};
         modelChamCong = new DefaultTableModel(cols, 0) {
              @Override public boolean isCellEditable(int row, int column) { return false; }
         };
         tableChamCong = new JTable(modelChamCong);
-        panel.add(new JScrollPane(tableChamCong), BorderLayout.CENTER);
+        setupTable(tableChamCong);
         
-        btnRefresh = new JButton("Tải lại danh sách hôm nay");
+        JScrollPane scrollPane = new JScrollPane(tableChamCong);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        
+        JPanel tableContainer = new RoundedPanel(15, Color.WHITE);
+        tableContainer.setLayout(new BorderLayout());
+        tableContainer.setBorder(new EmptyBorder(10, 10, 10, 10));
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        
+        panel.add(tableContainer, BorderLayout.CENTER);
+        
+        //Refresh Button
+        btnRefresh = new ModernButton("Tải lại danh sách hôm nay", new Color(100, 116, 139), new Color(71, 85, 105));
+        btnRefresh.setPreferredSize(new Dimension(200, 35));
         btnRefresh.addActionListener(e -> loadBangChamCongHienTai());
-        panel.add(btnRefresh, BorderLayout.SOUTH);
+        
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.setOpaque(false);
+        bottomPanel.add(btnRefresh);
+        panel.add(bottomPanel, BorderLayout.SOUTH);
 
+        //Events
         btnCheckIn.addActionListener(e -> xuLyCheckIn());
         btnCheckOut.addActionListener(e -> xuLyCheckOut());
 
         loadBangChamCongHienTai(); 
         return panel;
     }
+
+    //NGHỈ PHÉP
+
+    private JPanel createPanelNghiPhep() {
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
+        panel.setBackground(new Color(241, 245, 249));
+        panel.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        RoundedPanel formPanel = new RoundedPanel(15, Color.WHITE);
+        formPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 10, 8, 10); 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel lblTitle = new JLabel("TẠO ĐƠN XIN NGHỈ PHÉP");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitle.setForeground(new Color(30, 41, 59));
+        
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 4;
+        formPanel.add(lblTitle, gbc);
+
+        gbc.gridwidth = 1; gbc.gridy = 1;
+        
+        gbc.gridx = 0; formPanel.add(createLabel("Mã Nhân viên:"), gbc);
+        gbc.gridx = 1; txtMaNVNghi = new JTextField(); setupTextField(txtMaNVNghi); formPanel.add(txtMaNVNghi, gbc);
+        
+        gbc.gridx = 2; formPanel.add(createLabel("Lý do:"), gbc);
+        gbc.gridx = 3; gbc.gridheight = 2; gbc.fill = GridBagConstraints.BOTH;
+        txtLyDo = new JTextArea(3, 20); 
+        txtLyDo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtLyDo.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        formPanel.add(new JScrollPane(txtLyDo), gbc);
+        
+        gbc.gridheight = 1; gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = 2;
+        
+        gbc.gridx = 0; formPanel.add(createLabel("Từ ngày (dd/MM/yyyy):"), gbc);
+        gbc.gridx = 1; txtTuNgay = new JTextField(); setupTextField(txtTuNgay); formPanel.add(txtTuNgay, gbc);
+
+        gbc.gridy = 3;
+        gbc.gridx = 0; formPanel.add(createLabel("Đến ngày (dd/MM/yyyy):"), gbc);
+        gbc.gridx = 1; txtDenNgay = new JTextField(); setupTextField(txtDenNgay); formPanel.add(txtDenNgay, gbc);
+        
+        //Button Send
+        gbc.gridx = 3;
+        btnGuiDon = new ModernButton("Gửi Đơn", new Color(37, 99, 235), new Color(29, 78, 216));
+        btnGuiDon.setPreferredSize(new Dimension(120, 35));
+        btnGuiDon.addActionListener(e -> guiDonNghiPhep());
+        formPanel.add(btnGuiDon, gbc);
+        
+        panel.add(formPanel, BorderLayout.NORTH);
+
+        String[] cols = {"ID", "Mã NV", "Từ ngày", "Đến ngày", "Lý do", "Trạng thái"};
+        modelNghiPhep = new DefaultTableModel(cols, 0) {
+             @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tableNghiPhep = new JTable(modelNghiPhep);
+        setupTable(tableNghiPhep);
+        
+        JPanel tableContainer = new RoundedPanel(15, Color.WHITE);
+        tableContainer.setLayout(new BorderLayout());
+        tableContainer.setBorder(new EmptyBorder(10, 10, 10, 10));
+        tableContainer.add(new JScrollPane(tableNghiPhep), BorderLayout.CENTER);
+        
+        panel.add(tableContainer, BorderLayout.CENTER);
+        
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.setOpaque(false);
+        btnLoadDon = new ModernButton("Làm mới danh sách", new Color(100, 116, 139), new Color(71, 85, 105));
+        btnLoadDon.setPreferredSize(new Dimension(160, 35));
+        btnLoadDon.addActionListener(e -> loadDanhSachDonNghi());
+        bottomPanel.add(btnLoadDon);
+        
+        panel.add(bottomPanel, BorderLayout.SOUTH);
+
+        loadDanhSachDonNghi();
+        return panel;
+    }
+
+
+    //VI PHẠM
+
+    private JPanel createPanelViPham() {
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
+        panel.setBackground(new Color(241, 245, 249));
+        panel.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        RoundedPanel formPanel = new RoundedPanel(15, Color.WHITE);
+        formPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel lblTitle = new JLabel("XỬ LÝ VI PHẠM & KỶ LUẬT");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitle.setForeground(new Color(185, 28, 28));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        formPanel.add(lblTitle, gbc);
+
+        gbc.gridwidth = 1; gbc.gridy = 1;
+        gbc.gridx = 0; formPanel.add(createLabel("Nhập Mã NV vi phạm:"), gbc);
+        
+        gbc.gridx = 1; 
+        txtMaNVViPham = new JTextField(15);
+        setupTextField(txtMaNVViPham);
+        formPanel.add(txtMaNVViPham, gbc);
+
+        gbc.gridy = 2;
+        gbc.gridx = 0; formPanel.add(createLabel("Loại vi phạm:"), gbc);
+
+        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        radioPanel.setOpaque(false);
+        radioDiMuon = new JRadioButton("Đi muộn (+1 điểm)");
+        radioKhongPhep = new JRadioButton("Nghỉ không phép (+2 điểm)");
+        
+        radioDiMuon.setOpaque(false); radioDiMuon.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        radioKhongPhep.setOpaque(false); radioKhongPhep.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        radioDiMuon.setSelected(true);
+        
+        groupViPham = new ButtonGroup();
+        groupViPham.add(radioDiMuon);
+        groupViPham.add(radioKhongPhep);
+        
+        radioPanel.add(radioDiMuon);
+        radioPanel.add(radioKhongPhep);
+        
+        gbc.gridx = 1; formPanel.add(radioPanel, gbc);
+
+        gbc.gridy = 3; gbc.gridx = 1; gbc.anchor = GridBagConstraints.EAST; gbc.fill = GridBagConstraints.NONE;
+        btnPhat = new ModernButton("Ghi nhận Vi phạm", new Color(220, 38, 38), new Color(185, 28, 28));
+        btnPhat.setPreferredSize(new Dimension(160, 40));
+        btnPhat.addActionListener(e -> xuLyGhiNhanViPham());
+        formPanel.add(btnPhat, gbc);
+        
+        panel.add(formPanel, BorderLayout.NORTH);
+        
+        String[] columnNames = {"Mã NV", "Họ Tên", "Lỗi vi phạm", "Điểm cộng thêm"};
+        modelLichSuViPham = new DefaultTableModel(columnNames, 0) {
+             @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tableLichSuViPham = new JTable(modelLichSuViPham);
+        setupTable(tableLichSuViPham);
+        
+        JPanel tableContainer = new RoundedPanel(15, Color.WHITE);
+        tableContainer.setLayout(new BorderLayout());
+        tableContainer.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        JLabel lblTable = new JLabel("Lịch sử ghi nhận vừa qua:");
+        lblTable.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblTable.setBorder(new EmptyBorder(0, 0, 10, 0));
+        tableContainer.add(lblTable, BorderLayout.NORTH);
+        
+        tableContainer.add(new JScrollPane(tableLichSuViPham), BorderLayout.CENTER);
+        
+        panel.add(tableContainer, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+
+    private JLabel createLabel(String text) {
+        JLabel lbl = new JLabel(text);
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lbl.setForeground(new Color(71, 85, 105));
+        return lbl;
+    }
+
+    private void setupTextField(JTextField txt) {
+        txt.setPreferredSize(new Dimension(200, 35));
+        txt.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txt.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.LIGHT_GRAY), 
+            BorderFactory.createEmptyBorder(5, 8, 5, 8)
+        ));
+    }
+
+    private void setupTable(JTable table) {
+        table.setRowHeight(35);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setSelectionBackground(new Color(219, 234, 254));
+        table.setSelectionForeground(Color.BLACK);
+        table.setShowVerticalLines(false);
+        table.setGridColor(new Color(241, 245, 249));
+        
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setBackground(new Color(248, 250, 252));
+        header.setForeground(new Color(71, 85, 105));
+        header.setPreferredSize(new Dimension(100, 45));
+    }
+
+
 
     private void loadDanhSachCa() {
         if(cmbCaLamViec == null) return;
@@ -313,55 +547,6 @@ public class TabHieuSuat extends JPanel {
         }).start();
     }
 
-    //NGHỈ PHÉP
-
-    private JPanel createPanelNghiPhep() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        //Form xin nghỉ
-        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createTitledBorder("Tạo đơn xin nghỉ phép"));
-        
-        formPanel.add(new JLabel("Mã Nhân viên:"));
-        txtMaNVNghi = new JTextField(); formPanel.add(txtMaNVNghi);
-        
-        formPanel.add(new JLabel("Từ ngày (dd/MM/yyyy):"));
-        txtTuNgay = new JTextField(); formPanel.add(txtTuNgay);
-        
-        formPanel.add(new JLabel("Đến ngày (dd/MM/yyyy):"));
-        txtDenNgay = new JTextField(); formPanel.add(txtDenNgay);
-        
-        formPanel.add(new JLabel("Lý do:"));
-        txtLyDo = new JTextArea(3, 20); 
-        JScrollPane scrollLyDo = new JScrollPane(txtLyDo);
-        formPanel.add(scrollLyDo);
-        
-        JButton btnGuiDon = new JButton("Gửi Đơn");
-        btnGuiDon.addActionListener(e -> guiDonNghiPhep());
-        
-        JPanel topContainer = new JPanel(new BorderLayout());
-        topContainer.add(formPanel, BorderLayout.CENTER);
-        topContainer.add(btnGuiDon, BorderLayout.SOUTH);
-        
-        panel.add(topContainer, BorderLayout.NORTH);
-
-        //Bảng danh sách đơn
-        String[] cols = {"ID", "Mã NV", "Từ ngày", "Đến ngày", "Lý do", "Trạng thái"};
-        modelNghiPhep = new DefaultTableModel(cols, 0) {
-             @Override public boolean isCellEditable(int row, int column) { return false; }
-        };
-        tableNghiPhep = new JTable(modelNghiPhep);
-        panel.add(new JScrollPane(tableNghiPhep), BorderLayout.CENTER);
-        
-        JButton btnLoadDon = new JButton("Làm mới danh sách");
-        btnLoadDon.addActionListener(e -> loadDanhSachDonNghi());
-        panel.add(btnLoadDon, BorderLayout.SOUTH);
-
-        loadDanhSachDonNghi();
-        return panel;
-    }
-
     private void guiDonNghiPhep() {
         String maNV = txtMaNVNghi.getText().trim();
         String tuNgay = txtTuNgay.getText().trim();
@@ -417,64 +602,6 @@ public class TabHieuSuat extends JPanel {
                 });
             }
         } catch (SQLException e) { e.printStackTrace(); }
-    }
-
-    //XỬ LÝ VI PHẠM
-
-    private JPanel createPanelViPham() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
-
-        //Form nhập liệu phạt
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Nhập Mã nhân viên vi phạm:"), gbc);
-        
-        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        txtMaNVViPham = new JTextField(15);
-        panel.add(txtMaNVViPham, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
-        panel.add(new JLabel("Loại vi phạm:"), gbc);
-
-        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        radioDiMuon = new JRadioButton("Đi muộn (+1 điểm phạt)");
-        radioKhongPhep = new JRadioButton("Nghỉ không phép (+2 điểm phạt)");
-        radioDiMuon.setSelected(true);
-        
-        groupViPham = new ButtonGroup();
-        groupViPham.add(radioDiMuon);
-        groupViPham.add(radioKhongPhep);
-        
-        radioPanel.add(radioDiMuon);
-        radioPanel.add(radioKhongPhep);
-        
-        gbc.gridx = 1;
-        panel.add(radioPanel, gbc);
-
-        gbc.gridx = 1; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.EAST;
-        JButton btnPhat = new JButton("Ghi nhận Vi phạm");
-        btnPhat.setBackground(Color.RED);
-        btnPhat.setForeground(Color.WHITE);
-        btnPhat.addActionListener(e -> xuLyGhiNhanViPham());
-        panel.add(btnPhat, gbc);
-        
-        //Bảng lịch sử phạt
-        gbc.gridy = 3; gbc.gridx = 0; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0; gbc.weighty = 1.0; 
-        
-        String[] columnNames = {"Mã NV", "Họ Tên", "Lỗi vi phạm", "Điểm cộng thêm"};
-        modelLichSuViPham = new DefaultTableModel(columnNames, 0) {
-             @Override public boolean isCellEditable(int row, int column) { return false; }
-        };
-        tableLichSuViPham = new JTable(modelLichSuViPham);
-        
-        JScrollPane scrollPane = new JScrollPane(tableLichSuViPham);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách Vi phạm vừa ghi nhận"));
-        panel.add(scrollPane, gbc);
-
-        return panel;
     }
 
     private void xuLyGhiNhanViPham() {

@@ -74,8 +74,8 @@ public class TabDaoTao extends JPanel {
     private void loadKhoaHoc() {
         modelKhoa.setRowCount(0);
         try (Connection conn = DatabaseHandler.connect();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM khoa_dao_tao")) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM khoa_dao_tao")) {
             while(rs.next()) {
                 modelKhoa.addRow(new Object[]{rs.getString("ma_khoa"), rs.getString("ten_khoa"), rs.getString("ngay_bat_dau"), rs.getString("ngay_ket_thuc")});
             }
@@ -119,7 +119,7 @@ public class TabDaoTao extends JPanel {
         String maNV = txtMaNVHoc.getText().trim();
 
         try (Connection conn = DatabaseHandler.connect();
-            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO hoc_vien(ma_khoa, ma_nv, ket_qua) VALUES(?,?,?)")) {
+             PreparedStatement pstmt = conn.prepareStatement("INSERT INTO hoc_vien(ma_khoa, ma_nv, ket_qua) VALUES(?,?,?)")) {
             pstmt.setString(1, maKhoa);
             pstmt.setString(2, maNV);
             pstmt.setString(3, "Đang học");

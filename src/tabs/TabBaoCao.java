@@ -2,15 +2,18 @@ package tabs;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import MainApp.*;
+import objects.*;
+
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import MainApp.*;
-import objects.*;
 
 public class TabBaoCao extends JPanel {
+
     private QuanLyNhanVienGUI parent;
     private List<NhanVien> danhSachNV;
 
@@ -58,7 +61,8 @@ public class TabBaoCao extends JPanel {
         bottomPanel.add(btnRefresh);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-     public void refreshBaoCao() {
+
+    public void refreshBaoCao() {
         if (modelTopThuong == null || modelTopPhat == null) return;
 
         modelTopThuong.setRowCount(0);
@@ -95,6 +99,4 @@ public class TabBaoCao extends JPanel {
             });
         }
     }
-
-
 }

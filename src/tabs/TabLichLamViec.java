@@ -54,7 +54,7 @@ public class TabLichLamViec extends JPanel {
     public TabLichLamViec(QuanLyNhanVienGUI parent) {
         this.parent = parent;
         this.currentCalendar = Calendar.getInstance();
-        this.currentCalendar.set(Calendar.DAY_OF_MONTH, 1); // Reset về ngày 1
+        this.currentCalendar.set(Calendar.DAY_OF_MONTH, 1); //Reset về ngày 1
         this.currentMonth = currentCalendar.get(Calendar.MONTH);
         this.currentYear = currentCalendar.get(Calendar.YEAR);
         
@@ -97,6 +97,7 @@ public class TabLichLamViec extends JPanel {
             currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
             currentMonth = currentCalendar.get(Calendar.MONTH);
             currentYear = currentCalendar.get(Calendar.YEAR);
+            loadDuLieuLichThang(currentMonth, currentYear);
             refreshCalendar();
         });
 
@@ -144,7 +145,7 @@ public class TabLichLamViec extends JPanel {
         }
 
         //Calendar Grid
-        pnlCalendarGrid = new JPanel(new GridLayout(0, 7)); // Row dynamic
+        pnlCalendarGrid = new JPanel(new GridLayout(0, 7));
         pnlCalendarGrid.setBackground(Color.WHITE);
 
         pnlWrapper.add(pnlHeader, BorderLayout.NORTH);
@@ -187,7 +188,7 @@ public class TabLichLamViec extends JPanel {
         for (NhanVien nv : danhSachNV) {
             cmbNhanVienFilter.addItem(nv.getMaNhanVien() + " - " + nv.getHoTen());
         }
-        cmbNhanVienFilter.addActionListener(e -> refreshCalendar()); // vẽ lại khi đổi filter
+        cmbNhanVienFilter.addActionListener(e -> refreshCalendar()); //vẽ lại khi đổi filter
         pnlFilter.add(cmbNhanVienFilter);
 
         //Legend (Chú thích)
@@ -229,7 +230,7 @@ public class TabLichLamViec extends JPanel {
         return p;
     }
 
-    // ***LOGIC & RENDERING
+    //LOGIC & RENDERING
     
     private void changeMonth(int offset) {
         currentCalendar.add(Calendar.MONTH, offset);
@@ -306,7 +307,6 @@ public class TabLichLamViec extends JPanel {
         pnlCalendarGrid.repaint();
     }
 
-    //INNER CLASSES (CUSTOM COMPONENTS)
 
     /**
      * DayPanel: Đại diện cho 1 ô ngày trên lịch
@@ -512,7 +512,7 @@ public class TabLichLamViec extends JPanel {
         }
     }
 
-    // Hiển thị Dialog chi tiết để chỉnh sửa thủ công cho 1 ngày
+    //Hiển thị Dialog chi tiết để chỉnh sửa thủ công cho 1 ngày
 
     private void showDetailDialog(String date, List<ShiftData> currentShifts) {
         JDialog dlg = new JDialog(parent, "Quản lý ca ngày: " + date, true);
@@ -585,7 +585,7 @@ public class TabLichLamViec extends JPanel {
                 dlg.dispose();
                 loadDuLieuLichThang(currentMonth, currentYear);
                 refreshCalendar();
-                showDetailDialog(date, mapLichLamViec.get(date)); // Re-open to refresh
+                showDetailDialog(date, mapLichLamViec.get(date)); //Re-open to refresh
             } catch (SQLException ex) { ex.printStackTrace(); }
         });
 
@@ -647,7 +647,7 @@ public class TabLichLamViec extends JPanel {
         gbc.gridy++;
         JButton btnRun = new JButton("BẮT ĐẦU XẾP CA");
         btnRun.setBackground(new Color(0, 153, 76));
-        btnRun.setForeground(Color.WHITE);
+        btnRun.setForeground(Color.BLACK);
         dlg.add(btnRun, gbc);
 
         btnRun.addActionListener(e -> {
