@@ -217,5 +217,16 @@ public class TabEmail extends JPanel {
                 
                 SwingUtilities.invokeLater(() -> progressBar.setValue(currentProgress));
             }
+
+            final int finalCount = countSuccess;
+            SwingUtilities.invokeLater(() -> {
+                lblStatus.setText("Hoàn tất! Gửi thành công: " + finalCount + "/" + recipients.size());
+                btnGui.setEnabled(true);
+                JOptionPane.showMessageDialog(this, "Đã gửi xong " + finalCount + " email.");
+            });
+            
+            parent.ghiNhatKy("Gửi Email", "Gửi " + countSuccess + " mail. Tiêu đề: " + subject);
+            
+        }).start();
     }
 }
