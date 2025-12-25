@@ -147,6 +147,14 @@ public class TabEmail extends JPanel {
     }
 
     private void xuLyGuiEmail() {
-        
+        String fromEmail = txtEmailGui.getText().trim();
+        String password = new String(txtMatKhauEmail.getPassword()).trim();
+        String subject = txtTieuDe.getText().trim();
+        String content = txtNoiDung.getText();
+
+        if (fromEmail.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Email gửi và Mật khẩu ứng dụng!", "Thiếu thông tin", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
     }
 }
