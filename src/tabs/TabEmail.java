@@ -51,7 +51,14 @@ public class TabEmail extends JPanel {
         };
         tableNV = new JTable(modelNV);
 
-        loadNhanVien();
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                danhSachNV = parent.danhSachNV; 
+                loadNhanVien();
+                System.out.println("Tab Email vừa được mở - Đã cập nhật danh sách: " + danhSachNV.size() + " người.");
+            }
+        });
         
         pnlLeft.add(new JScrollPane(tableNV), BorderLayout.CENTER);
         

@@ -251,9 +251,18 @@ public class TabNhanVien extends JPanel {
 
         if (tenMoi.isEmpty() || pbMoi == null) { return; }
         int validatedThamNien = 0;
-        try {
-            if(!thamNienMoiStr.isEmpty()) validatedThamNien = Integer.parseInt(thamNienMoiStr);
-        } catch(Exception ex) { return; }
+        if (!thamNienMoiStr.isEmpty()) {
+            try {
+                validatedThamNien = Integer.parseInt(thamNienMoiStr);
+                if (validatedThamNien < 0) {
+                    JOptionPane.showMessageDialog(this, "Thâm niên phải là một số không âm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Thâm niên phải là một con số (ví dụ: 5).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
 
         for(NhanVien nv : danhSachNV) {
             if(nv.getMaNhanVien().equals(maNV)) {
