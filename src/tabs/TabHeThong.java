@@ -109,4 +109,122 @@ public class TabHeThong extends JPanel {
         btnRestore.addActionListener(e -> xuLyRestore());
         btnDoiPass.addActionListener(e -> xuLyDoiMatKhau());
     }
+
+    private boolean yeuCauXacThuc() {
+        String currentUser = parent.getCurrentUser();
+        if (currentUser == null || currentUser.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Lỗi: Không xác định được phiên đăng nhập!");
+            return false;
+        }
+
+        JPasswordField pf = new JPasswordField();
+        int okCxl = JOptionPane.showConfirmDialog(this, pf, 
+            "Nhập mật khẩu của [" + currentUser + "] để tiếp tục:", 
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (okCxl == JOptionPane.OK_OPTION) {
+            String password = new String(pf.getPassword());
+            //Tái sử dụng hàm đăng nhập để kiểm tra pass
+            if (quanLyTaiKhoan.dangNhap(currentUser, password) != null) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(this, "Mật khẩu không đúng! Từ chối truy cập.", "Cảnh báo bảo mật", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private void xuLyBackup() {
+        //Thêm lớp bảo mật
+        if (!yeuCauXacThuc()) return;
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu file Backup");
+        fileChooser.setSelectedFile(new File("backup_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".db"));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileDest = fileChooser.getSelectedFile();
+            File fileSource = new File(DB_SOURCE);
+            
+            try {
+                if (!fileSource.exists()) {
+                    JOptionPane.showMessageDialog(this, "Không tìm thấy file database gốc!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                Files.copy(fileSource.toPath(), fileDest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                JOptionPane.showMessageDialog(this, "Sao lưu thành công!\n" + fileDest.getAbsolutePath());
+                parent.ghiNhatKy("Hệ thống", "Backup database thành công");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Lỗi khi sao lưu: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void xuLyRestore() {
+        //Thêm lớp bảo mật
+        if (!yeuCauXacThuc()) return;
+
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "CẢNH BÁO: Dữ liệu hiện tại sẽ bị ghi đè hoàn toàn bởi file backup.\nBạn có chắc chắn muốn tiếp tục?", 
+            "Xác nhận phục hồi", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn file Backup để phục hồi");
+        
+        int userSelection = fileChooser.showOpenDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileSource = fileChooser.getSelectedFile();
+            File fileDest = new File(DB_SOURCE);
+            
+            try {
+                //Copy đè file
+                Files.copy(fileSource.toPath(), fileDest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                
+                JOptionPane.showMessageDialog(this, "Phục hồi thành công! Vui lòng khởi động lại ứng dụng để áp dụng dữ liệu mới.");
+                parent.ghiNhatKy("Hệ thống", "Restore database từ: " + fileSource.getName());
+                
+                //Tự động tắt ứng dụng
+                System.exit(0);
+                
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Lỗi khi phục hồi: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void xuLyDoiMatKhau() {
+        String passCu = new String(txtPassCu.getPassword());
+        String passMoi = new String(txtPassMoi.getPassword());
+        String xacNhan = new String(txtPassXacNhan.getPassword());
+        
+        if (passCu.isEmpty() || passMoi.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!"); return;
+        }
+        
+        if (!passMoi.equals(xacNhan)) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!", "Lỗi", JOptionPane.ERROR_MESSAGE); return;
+        }
+        
+        // Lấy username hiện tại từ Parent GUI
+        String currentUser = parent.getCurrentUser();
+        if (currentUser == null || currentUser.isEmpty()) {
+             JOptionPane.showMessageDialog(this, "Không xác định được người dùng hiện tại!"); return;
+        }
+
+        boolean ketQua = quanLyTaiKhoan.doiMatKhau(currentUser, passCu, passMoi);
+        if (ketQua) {
+            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công!");
+            txtPassCu.setText(""); txtPassMoi.setText(""); txtPassXacNhan.setText("");
+            parent.ghiNhatKy("Bảo mật", "Đổi mật khẩu thành công");
+        } else {
+            JOptionPane.showMessageDialog(this, "Mật khẩu cũ không đúng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
 }
