@@ -49,4 +49,25 @@ public class TabDaoTao extends JPanel {
         loadKhoaHoc();
         return panel;
     }
+
+    private JPanel createPanelHocVien() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Danh sách Học viên tham gia"));
+
+        JPanel form = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        form.add(new JLabel("Nhập Mã NV để thêm vào khóa:"));
+        txtMaNVHoc = new JTextField(10);
+        form.add(txtMaNVHoc);
+        JButton btnAdd = new JButton("Thêm Học viên");
+        btnAdd.addActionListener(e -> themHocVien());
+        form.add(btnAdd);
+
+        panel.add(form, BorderLayout.NORTH);
+
+        modelHocVien = new DefaultTableModel(new String[]{"Mã NV", "Họ Tên", "Kết quả"}, 0);
+        tableHocVien = new JTable(modelHocVien);
+        panel.add(new JScrollPane(tableHocVien), BorderLayout.CENTER);
+
+        return panel;
+    }
 }
