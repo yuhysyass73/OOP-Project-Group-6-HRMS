@@ -171,5 +171,25 @@ public class TabEmail extends JPanel {
             JOptionPane.showMessageDialog(this, "Chưa chọn nhân viên nào hoặc nhân viên không có email!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        new Thread(() -> {
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setMaximum(recipients.size());
+                progressBar.setValue(0);
+                btnGui.setEnabled(false);
+            });
+
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+
+            Session session = Session.getInstance(props, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(fromEmail, password);
+                }
+            });
     }
 }
