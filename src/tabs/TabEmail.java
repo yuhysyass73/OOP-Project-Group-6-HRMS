@@ -156,5 +156,20 @@ public class TabEmail extends JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập Email gửi và Mật khẩu ứng dụng!", "Thiếu thông tin", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        //Lọc danh sách nhận
+        java.util.List<String> recipients = new java.util.ArrayList<>();
+        for (int i = 0; i < modelNV.getRowCount(); i++) {
+            Boolean isChecked = (Boolean) modelNV.getValueAt(i, 0);
+            String emailNhan = (String) modelNV.getValueAt(i, 3);
+            if (isChecked && emailNhan != null && !emailNhan.isEmpty()) {
+                recipients.add(emailNhan);
+            }
+        }
+
+        if (recipients.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Chưa chọn nhân viên nào hoặc nhân viên không có email!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     }
 }
