@@ -2,7 +2,7 @@ package MainApp;
 import javax.swing.*;
 
 import dataa.*;
-import doituong.*;
+import objects.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
