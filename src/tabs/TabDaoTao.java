@@ -94,4 +94,38 @@ public class TabDaoTao extends JPanel {
             parent.ghiNhatKy("Đào tạo", "Tạo khóa mới: " + txtTenKhoa.getText());
         } catch (Exception e) { JOptionPane.showMessageDialog(this, "Lỗi tạo khóa học (Trùng mã?)"); }
     }
+
+    private void loadHocVien() {
+        int row = tableKhoa.getSelectedRow();
+        if (row == -1) return;
+        String maKhoa = modelKhoa.getValueAt(row, 0).toString();
+        
+        modelHocVien.setRowCount(0);
+        String sql = "SELECT hv.ma_nv, nv.ho_ten, hv.ket_qua FROM hoc_vien hv JOIN nhan_vien nv ON hv.ma_nv = nv.ma_nv WHERE hv.ma_khoa = ?";
+        try (Connection conn = DatabaseHandler.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, maKhoa);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+                modelHocVien.addRow(new Object[]{rs.getString("ma_nv"), rs.getString("ho_ten"), rs.getString("ket_qua")});
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    private void themHocVien() {
+        int row = tableKhoa.getSelectedRow();
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Chọn khóa học trước!"); return; }
+        String maKhoa = modelKhoa.getValueAt(row, 0).toString();
+        String maNV = txtMaNVHoc.getText().trim();
+
+        try (Connection conn = DatabaseHandler.connect();
+            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO hoc_vien(ma_khoa, ma_nv, ket_qua) VALUES(?,?,?)")) {
+            pstmt.setString(1, maKhoa);
+            pstmt.setString(2, maNV);
+            pstmt.setString(3, "Đang học");
+            pstmt.executeUpdate();
+            loadHocVien();
+            parent.ghiNhatKy("Đào tạo", "Thêm NV " + maNV + " vào khóa " + maKhoa);
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Lỗi! NV có thể đã trong khóa hoặc không tồn tại."); }
+    }
 }
