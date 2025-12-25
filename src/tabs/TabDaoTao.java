@@ -70,4 +70,28 @@ public class TabDaoTao extends JPanel {
 
         return panel;
     }
+
+    private void loadKhoaHoc() {
+        modelKhoa.setRowCount(0);
+        try (Connection conn = DatabaseHandler.connect();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM khoa_dao_tao")) {
+            while(rs.next()) {
+                modelKhoa.addRow(new Object[]{rs.getString("ma_khoa"), rs.getString("ten_khoa"), rs.getString("ngay_bat_dau"), rs.getString("ngay_ket_thuc")});
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    private void themKhoaHoc() {
+        try (Connection conn = DatabaseHandler.connect();
+             PreparedStatement pstmt = conn.prepareStatement("INSERT INTO khoa_dao_tao(ma_khoa, ten_khoa, ngay_bat_dau, ngay_ket_thuc) VALUES(?,?,?,?)")) {
+            pstmt.setString(1, txtMaKhoa.getText());
+            pstmt.setString(2, txtTenKhoa.getText());
+            pstmt.setString(3, txtNgayBD.getText());
+            pstmt.setString(4, txtNgayKT.getText());
+            pstmt.executeUpdate();
+            loadKhoaHoc();
+            parent.ghiNhatKy("Đào tạo", "Tạo khóa mới: " + txtTenKhoa.getText());
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Lỗi tạo khóa học (Trùng mã?)"); }
+    }
 }
