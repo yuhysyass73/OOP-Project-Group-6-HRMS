@@ -15,4 +15,13 @@ public class TabDaoTao extends JPanel {
     private JTable tableKhoa, tableHocVien;
     private JTextField txtMaKhoa, txtTenKhoa, txtNgayBD, txtNgayKT;
     private JTextField txtMaNVHoc;
+
+    public TabDaoTao(QuanLyNhanVienGUI parent) {
+        this.parent = parent;
+        setLayout(new BorderLayout(10, 10));
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createPanelKhoaHoc(), createPanelHocVien());
+        splitPane.setResizeWeight(0.5);
+        add(splitPane, BorderLayout.CENTER);
+    }
 }
