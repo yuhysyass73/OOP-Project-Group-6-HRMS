@@ -138,6 +138,7 @@ public class TabDashboard extends JPanel {
         public MetricCard(String title, String value, String unit, Color color) {
             super(15, Color.WHITE);
             setLayout(null);
+            setPreferredSize(new Dimension(170,142));
             
             JPanel stripe = new JPanel();
             stripe.setBackground(color);
